@@ -1,0 +1,51 @@
+{
+ "model": "qwen3.6:35b-a3b",
+ "task": "Which Python file in this folder is the longest, and what does it do?",
+ "events": [
+  {
+   "t": 0.0,
+   "role": "task",
+   "text": "Which Python file in this folder is the longest, and what does it do?"
+  },
+  {
+   "t": 3.48,
+   "role": "step 1",
+   "text": "list_files({'path': '.'})"
+  },
+  {
+   "t": 3.48,
+   "role": "result",
+   "text": "01_chat.py\n02_one_tool.py\n03_agent_loop.py\n__pycache__\ncommon.py"
+  },
+  {
+   "t": 5.44,
+   "role": "step 2",
+   "text": "bash({'command': 'wc -l *.py'})"
+  },
+  {
+   "t": 5.44,
+   "role": "allow?",
+   "text": "wc -l *.py"
+  },
+  {
+   "t": 5.46,
+   "role": "result",
+   "text": "      18 01_chat.py\n      32 02_one_tool.py\n      60 03_agent_loop.py\n      91 common.py\n     201 total\n"
+  },
+  {
+   "t": 6.93,
+   "role": "step 3",
+   "text": "read_file({'path': 'common.py'})"
+  },
+  {
+   "t": 6.93,
+   "role": "result",
+   "text": "\"\"\"Shared by every step: a client for the language model and a printout of what the agent does.\n\nThe default is a local model in Ollama, so no API key is needed. Environment variables switch it:\n\n    MODEL=gemma4:e2b python 03_agent_loop.py              # another local model\n    OPENAI_API_KEY=sk-... MODEL=gpt-5.2 python ...        # OpenAI instead of Ollama\n\"\"\"\nimport json\nimport os\n\nfrom openai import OpenAI\n\nif os.getenv(\"OPENAI_API_KEY\"):\n    client = OpenAI()\n    MODEL = os.getenv(\"MODEL\", \"gpt-5.2\")\nelse:\n    client = OpenAI(base_url=os.getenv(\"OLLAMA_URL\", \"http://127.0.0.1:11434/v1\"), api_key=\"ollama\")\n    MODEL = os.getenv(\"MODEL\", \"qwen3.6:35b-a3b\")\n\nGREY, YELLOW, BLUE, GREEN, RED, RESET = \"\\033[90m\", \"\\033[33m\", \"\\033[36m\", \"\\033[32m\", \"\\033[31m\", \"\\033[0m\"\n\n\ndef call(context, tools=None):\n    \"\"\"One call to the model. The whole context is sent every time: the model remembers nothing.\"\"\"\n    response = client.chat.completions.create(model=MODEL, messages=context, tools=tools or None)\n    return response.choices[0].message\n\n\ndef tool(name, description, /, **params):\n    \"\"\"Describe a tool in the format models are trained on (JSON Schema). Every parameter is a string.\"\"\"\n    return {\"type\": \"function\", \"function\": {\n        \"name\": name, \"description\": description,\n        \"parameters\": {\"type\": \"object\",\n                       \"properties\": {p: {\"type\": \"string\", \"description\": d} for p, d in params.items()},\n                       \"required\": list(params)}}}\n\n\ndef as_message(msg):\n    \"\"\"Turn the model's reply back into a plain message that can go into the context again.\"\"\"\n    m = {\"role\": \"assistant\", \"content\": msg.content or \"\"}\n    if msg.tool_calls:\n        m[\"tool_calls\"] = [{\"id\": c.id, \"type\": \"function\",\n                            \"function\": {\"name\": c.function.name, \"arguments\": c.function.arguments}}\n                           for c in msg.tool_calls]\n    return m\n\n\ndef args(tool_call):\n    try:\n        return json.loads(tool_call.function.arguments or \"{}\")\n    except json.JSONDecodeError:\n        return {}\n\n\ndef loop(context, tools, execute, max_steps=12, label=\"\"):\n    \"\"\"The loop from step 3, packaged so the later steps can reuse it.\n\n    execute(name, args) runs one tool and returns a string. The loop ends when the model answers\n    without asking for a tool.\n    \"\"\"\n    for step in range(1, max_steps + 1):\n        reply = call(context, tools)\n        context.append(as_message(reply))\n        if not reply.tool_calls:\n            return reply.content\n        for request in reply.tool_calls:\n            a = args(request)\n            show(f\"{label}step {step}\", f\"{request.function.name}({a})\", BLUE)\n            try:\n                result = execute(request.function.name, a)\n            except Exception as e:\n                result = f\"error: {e}\"\n            show(\"result\", result, GREEN)\n            context.append({\"role\": \"tool\", \"tool_call_id\": request.id, \"content\": str(result)})\n    return \"Stopped: too many steps.\"\n\n\ndef ask(prompt=\"\\nYou: \"):\n    \"\"\"Read a line from the user; end the program cleanly on Ctrl+D or Ctrl+C.\"\"\"\n    try:\n        return input(prompt).strip()\n    except (EOFError, KeyboardInterrupt):\n        print()\n        raise SystemExit(0)\n\n\ndef show(role, text, colour=GREY):\n    text = \" \".join(str(text).split())\n    if len(text) > 300:\n        text = text[:300] + f\" … ({len(text)} chars)\"\n    print(f\"{colour}{role:>10}{RESET}  {text}\")\n"
+  },
+  {
+   "t": 12.59,
+   "role": "answer",
+   "text": "The longest Python file is **`common.py`** (91 lines). It serves as a shared library for the other scripts in the folder, providing:\n\n1. **Ollama/OpenAI client**: A configured OpenAI client that defaults to Ollama but switches to an OpenAI API if the `OPENAI_API_KEY` environment variable is set.\n2. **Tool descriptions**: A function to construct JSON Schema descriptions for tools.\n3. **Request/response handling**: Functions to serialize model messages into the expected format and parse tool call arguments.\n4. **Agent loop**: A general-purpose loop that repeatedly calls the model, executes tool calls, and feeds results back until the model provides a final text answer.\n5. **Utilities**: Simple helpers for reading user input (`ask`) and printing colored output (`show`)."
+  }
+ ]
+}

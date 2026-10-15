@@ -1,0 +1,610 @@
+{
+ "lang": "sv",
+ "title": "Så fungerar AI-agenter",
+ "duration": 476.874,
+ "scenes": [
+  {
+   "id": "intro",
+   "chapter": "Inledning",
+   "start": 0.0,
+   "dur": 30.709,
+   "cues": [
+    0.8,
+    5.621,
+    10.777,
+    12.898,
+    17.345,
+    22.155,
+    28.01
+   ],
+   "lines": [
+    {
+     "text": "Fråga en språkmodell vad meningen med livet är, så får du ett svar.",
+     "start": 0.8,
+     "end": 5.171
+    },
+    {
+     "text": "Fråga den vilken fil på din dator som är störst, så kan den inte svara.",
+     "start": 5.621,
+     "end": 10.327
+    },
+    {
+     "text": "Den kan bara skriva text.",
+     "start": 10.777,
+     "end": 12.448
+    },
+    {
+     "text": "En agent är vad du får när du låter den texten göra saker.",
+     "start": 12.898,
+     "end": 16.895
+    },
+    {
+     "text": "Under de närmaste minuterna bygger vi en från grunden, bit för bit.",
+     "start": 17.345,
+     "end": 21.705
+    },
+    {
+     "text": "Efteråt vet du hur verktyg som Claude Code, Codex och OpenClaw fungerar under ytan.",
+     "start": 22.155,
+     "end": 27.559
+    },
+    {
+     "text": "Det är enklare än du tror.",
+     "start": 28.01,
+     "end": 29.609
+    }
+   ]
+  },
+  {
+   "id": "model",
+   "chapter": "Modellen",
+   "start": 30.709,
+   "dur": 27.224,
+   "cues": [
+    0.8,
+    2.722,
+    11.547,
+    14.007,
+    15.38,
+    19.677,
+    24.38
+   ],
+   "lines": [
+    {
+     "text": "Vi börjar med hjärnan.",
+     "start": 31.509,
+     "end": 32.981
+    },
+    {
+     "text": "En stor språkmodell gör en enda sak: givet en text förutsäger den nästa token, ett ord eller en del av ett ord.",
+     "start": 33.431,
+     "end": 41.806
+    },
+    {
+     "text": "Sedan gör den det igen, och igen.",
+     "start": 42.256,
+     "end": 44.266
+    },
+    {
+     "text": "Det är allt.",
+     "start": 44.716,
+     "end": 45.639
+    },
+    {
+     "text": "Den har inget minne mellan anropen, ingen klocka och inga händer.",
+     "start": 46.089,
+     "end": 49.936
+    },
+    {
+     "text": "Allt den vet om din situation måste finnas i texten du skickar.",
+     "start": 50.386,
+     "end": 54.639
+    },
+    {
+     "text": "Den texten kallas kontexten.",
+     "start": 55.089,
+     "end": 56.832
+    }
+   ]
+  },
+  {
+   "id": "list",
+   "chapter": "En chatt är en lista",
+   "start": 57.932,
+   "dur": 28.197,
+   "cues": [
+    0.8,
+    3.746,
+    6.708,
+    15.889,
+    19.575,
+    23.693
+   ],
+   "lines": [
+    {
+     "text": "Hur kommer en chattbot då ihåg samtalet?",
+     "start": 58.732,
+     "end": 61.228
+    },
+    {
+     "text": "Det gör den inte. Programmet gör det.",
+     "start": 61.678,
+     "end": 64.191
+    },
+    {
+     "text": "Programmet sparar en lista med meddelanden: ett systemmeddelande med instruktioner, ditt meddelande och modellens svar.",
+     "start": 64.641,
+     "end": 73.371
+    },
+    {
+     "text": "Varje gång du säger något skickas hela listan igen.",
+     "start": 73.821,
+     "end": 77.058
+    },
+    {
+     "text": "Här är en komplett chattbot, på ungefär tio rader Python.",
+     "start": 77.508,
+     "end": 81.175
+    },
+    {
+     "text": "Listan som heter context är det enda minne som finns.",
+     "start": 81.625,
+     "end": 85.029
+    }
+   ]
+  },
+  {
+   "id": "tool",
+   "chapter": "Verktyg",
+   "start": 86.129,
+   "dur": 43.526,
+   "cues": [
+    0.8,
+    4.593,
+    14.812,
+    23.912,
+    31.647,
+    39.956
+   ],
+   "lines": [
+    {
+     "text": "Nu kommer tricket som gör en chattbot till en agent.",
+     "start": 86.929,
+     "end": 90.272
+    },
+    {
+     "text": "Tillsammans med meddelandena skickar vi en beskrivning av ett verktyg: ett namn, vad det gör och vilka argument det tar. Här en klocka.",
+     "start": 90.722,
+     "end": 100.491
+    },
+    {
+     "text": "Modellen kan inte köra något själv. Men den kan svara med ett särskilt meddelande som säger: anropa klockan.",
+     "start": 100.941,
+     "end": 109.591
+    },
+    {
+     "text": "Vårt program ser det, kör den riktiga funktionen och lägger till resultatet i listan som ett nytt meddelande.",
+     "start": 110.041,
+     "end": 117.326
+    },
+    {
+     "text": "Sedan frågar vi modellen igen. Nu finns tiden i kontexten, och den kan svara: i morgon är det fredag.",
+     "start": 117.776,
+     "end": 125.635
+    },
+    {
+     "text": "Modellen ber. Programmet agerar.",
+     "start": 126.085,
+     "end": 128.556
+    }
+   ]
+  },
+  {
+   "id": "loop",
+   "chapter": "Loopen",
+   "start": 129.656,
+   "dur": 29.882,
+   "cues": [
+    0.8,
+    3.673,
+    10.759,
+    14.664,
+    20.223
+   ],
+   "lines": [
+    {
+     "text": "Lägg det i en loop, så har du en agent.",
+     "start": 130.456,
+     "end": 132.878
+    },
+    {
+     "text": "Anropa modellen. Om den ber om verktyg, kör dem, lägg till resultaten och anropa den igen.",
+     "start": 133.328,
+     "end": 139.964
+    },
+    {
+     "text": "Om den svarar utan att be om ett verktyg är den klar.",
+     "start": 140.414,
+     "end": 143.87
+    },
+    {
+     "text": "Modellen bestämmer hur många steg den behöver. Vår kod sätter bara ett tak.",
+     "start": 144.32,
+     "end": 149.429
+    },
+    {
+     "text": "Varje agent du har hört talas om, från kodassistenter till personliga assistenter, är en variant av den här loopen.",
+     "start": 149.879,
+     "end": 158.438
+    }
+   ]
+  },
+  {
+   "id": "trace",
+   "chapter": "En riktig körning",
+   "start": 159.538,
+   "dur": 33.322,
+   "cues": [
+    0.8,
+    5.441,
+    10.987,
+    14.246,
+    22.427,
+    27.916
+   ],
+   "lines": [
+    {
+     "text": "Här är en riktig körning, med en lokal modell på en bärbar dator.",
+     "start": 160.338,
+     "end": 164.528
+    },
+    {
+     "text": "Uppgiften: vilken Python-fil i den här mappen är längst, och vad gör den?",
+     "start": 164.978,
+     "end": 170.075
+    },
+    {
+     "text": "Vi sa aldrig hur. Den listar filerna.",
+     "start": 170.525,
+     "end": 173.333
+    },
+    {
+     "text": "Sedan bestämmer den sig för att räkna raderna med ett terminalkommando, och vårt program ber oss om lov först.",
+     "start": 173.783,
+     "end": 181.515
+    },
+    {
+     "text": "Den läser den längsta filen och svarar. Allt tog ungefär tretton sekunder.",
+     "start": 181.965,
+     "end": 187.003
+    },
+    {
+     "text": "Vi gav den bara lov att titta. Resten listade den ut själv.",
+     "start": 187.453,
+     "end": 191.76
+    }
+   ]
+  },
+  {
+   "id": "bash",
+   "chapter": "Ett verktyg för allt",
+   "start": 192.86,
+   "dur": 31.186,
+   "cues": [
+    0.8,
+    10.41,
+    12.504,
+    18.059,
+    25.234
+   ],
+   "lines": [
+    {
+     "text": "Verktyg kan vara vad som helst som ett program kan göra: söka på webben, läsa en PDF, skicka ett mejl, fråga en databas.",
+     "start": 193.66,
+     "end": 202.82
+    },
+    {
+     "text": "Ett verktyg är speciellt.",
+     "start": 203.27,
+     "end": 204.914
+    },
+    {
+     "text": "Ge en agent en terminal, så kan den köra vilket kommando som helst på datorn.",
+     "start": 205.364,
+     "end": 210.469
+    },
+    {
+     "text": "Modellerna har läst miljontals terminalkommandon, så ett enda verktyg låser upp tusentals förmågor.",
+     "start": 210.919,
+     "end": 217.644
+    },
+    {
+     "text": "Det är så kodagenter fungerar. Det är också därför de kan vara farliga.",
+     "start": 218.094,
+     "end": 222.947
+    }
+   ]
+  },
+  {
+   "id": "context",
+   "chapter": "Kontexthantering",
+   "start": 224.047,
+   "dur": 54.006,
+   "cues": [
+    0.8,
+    5.266,
+    14.048,
+    17.449,
+    22.893,
+    29.459,
+    42.526,
+    48.212
+   ],
+   "lines": [
+    {
+     "text": "Det leder oss till det verkliga ingenjörsproblemet: kontexten.",
+     "start": 224.847,
+     "end": 228.863
+    },
+    {
+     "text": "Allt hamnar där. Systemprompten, verktygsbeskrivningarna, färdigheterna, minnet, samtalet och varje verktygsresultat.",
+     "start": 229.313,
+     "end": 237.644
+    },
+    {
+     "text": "Och alltihop skickas igen i varje enskilt steg.",
+     "start": 238.094,
+     "end": 241.046
+    },
+    {
+     "text": "Den fylls snabbt. En enda lång fil kan lägga till tusentals tokens på en gång.",
+     "start": 241.496,
+     "end": 246.49
+    },
+    {
+     "text": "Större kontext kostar mer, och efter en viss punkt blir modellen sämre på att använda den.",
+     "start": 246.94,
+     "end": 253.056
+    },
+    {
+     "text": "När fönstret nästan är fullt komprimerar agenten därför. Modellen sammanfattar den äldre delen, och sammanfattningen ersätter den. De senaste meddelandena behålls ordagrant.",
+     "start": 253.506,
+     "end": 266.122
+    },
+    {
+     "text": "Något går alltid förlorat. Att välja vad som ska behållas är konsten.",
+     "start": 266.572,
+     "end": 271.809
+    },
+    {
+     "text": "Därför talar man nu om kontexthantering, inte om promptformulering.",
+     "start": 272.259,
+     "end": 276.953
+    }
+   ]
+  },
+  {
+   "id": "memory",
+   "chapter": "Minne",
+   "start": 278.053,
+   "dur": 36.098,
+   "cues": [
+    0.8,
+    8.0,
+    18.03,
+    28.65
+   ],
+   "lines": [
+    {
+     "text": "Kontexten försvinner när programmet stängs. Minne är hur en agent kommer ihåg mellan sessioner.",
+     "start": 278.853,
+     "end": 285.603
+    },
+    {
+     "text": "Den enklaste varianten är en fil. Ge agenten ett verktyg för att skriva en anteckning, och läs in anteckningarna i kontexten nästa gång.",
+     "start": 286.053,
+     "end": 295.633
+    },
+    {
+     "text": "Riktiga system lägger till sökning, antingen vanlig ordsökning eller vektorsökning med inbäddningar, för att bara hämta de minnen som spelar roll.",
+     "start": 296.083,
+     "end": 306.252
+    },
+    {
+     "text": "Och att glömma är också viktigt. Ett minne fullt av struntsaker är bara mer brus i kontexten.",
+     "start": 306.702,
+     "end": 313.05
+    }
+   ]
+  },
+  {
+   "id": "skills",
+   "chapter": "Färdigheter",
+   "start": 314.15,
+   "dur": 33.455,
+   "cues": [
+    0.8,
+    5.924,
+    11.644,
+    16.765,
+    23.087
+   ],
+   "lines": [
+    {
+     "text": "Färdigheter, på engelska skills, löser samma problem för kunnande.",
+     "start": 314.95,
+     "end": 319.624
+    },
+    {
+     "text": "En färdighet är en mapp med en kort beskrivning och en uppsättning instruktioner.",
+     "start": 320.074,
+     "end": 325.345
+    },
+    {
+     "text": "Från början hamnar bara beskrivningarna, en rad var, i kontexten.",
+     "start": 325.795,
+     "end": 330.465
+    },
+    {
+     "text": "När en uppgift passar laddar agenten in de fullständiga instruktionerna, och först då.",
+     "start": 330.915,
+     "end": 336.787
+    },
+    {
+     "text": "Hundra färdigheter kostar hundra rader, inte hundra manualer. En agent kan till och med skriva nya färdigheter åt sig själv.",
+     "start": 337.237,
+     "end": 346.506
+    }
+   ]
+  },
+  {
+   "id": "subagents",
+   "chapter": "Underagenter",
+   "start": 347.606,
+   "dur": 26.66,
+   "cues": [
+    0.8,
+    3.722,
+    11.877,
+    20.717
+   ],
+   "lines": [
+    {
+     "text": "Underagenter är samma idé, en nivå upp.",
+     "start": 348.406,
+     "end": 350.878
+    },
+    {
+     "text": "En underagent är bara en annan kontextlista, med egna instruktioner och verktyg, som körs genom samma loop.",
+     "start": 351.328,
+     "end": 359.032
+    },
+    {
+     "text": "Huvudagenten ger den en uppgift. Underagenten kanske läser tjugo filer, men bara dess korta rapport kommer tillbaka.",
+     "start": 359.482,
+     "end": 367.872
+    },
+    {
+     "text": "Huvudkontexten hålls ren, och flera underagenter kan arbeta samtidigt.",
+     "start": 368.322,
+     "end": 373.166
+    }
+   ]
+  },
+  {
+   "id": "heartbeat",
+   "chapter": "Självständighet",
+   "start": 374.266,
+   "dur": 22.268,
+   "cues": [
+    0.8,
+    4.127,
+    7.984,
+    17.83
+   ],
+   "lines": [
+    {
+     "text": "Hittills agerar agenten bara när du skriver.",
+     "start": 375.066,
+     "end": 377.942
+    },
+    {
+     "text": "Självständighet betyder att den kan agera på egen hand.",
+     "start": 378.393,
+     "end": 381.8
+    },
+    {
+     "text": "OpenClaw använder ett hjärtslag. Var trettionde minut vaknar agenten, läser en enkel checklista, gör det som behövs och somnar om.",
+     "start": 382.25,
+     "end": 391.646
+    },
+    {
+     "text": "Du behåller kontrollen genom att redigera checklistan.",
+     "start": 392.096,
+     "end": 395.434
+    }
+   ]
+  },
+  {
+   "id": "safety",
+   "chapter": "Säkerhet",
+   "start": 396.534,
+   "dur": 43.061,
+   "cues": [
+    0.8,
+    7.468,
+    20.869,
+    25.482,
+    37.847
+   ],
+   "lines": [
+    {
+     "text": "Mer förmåga betyder mer risk. En agent som kan skicka din e-post kan skicka fel e-post.",
+     "start": 397.334,
+     "end": 403.551
+    },
+    {
+     "text": "Språkmodeller är inte deterministiska. Och text utifrån, en webbsida eller ett dokument, kan innehålla instruktioner som försöker ta över agenten. Det kallas promptinjektion.",
+     "start": 404.001,
+     "end": 416.953
+    },
+    {
+     "text": "Behandla därför allt en agent läser som data, aldrig som order.",
+     "start": 417.403,
+     "end": 421.566
+    },
+    {
+     "text": "Ge den minsta möjliga åtkomst som räcker för uppgiften. Fråga en människa innan något som inte går att ångra. Håll hemligheter utom räckhåll. Och logga allt.",
+     "start": 422.016,
+     "end": 433.93
+    },
+    {
+     "text": "Förmåga och säkerhet är en avvägning. Gör den medvetet.",
+     "start": 434.38,
+     "end": 438.495
+    }
+   ]
+  },
+  {
+   "id": "outro",
+   "chapter": "Bygg en själv",
+   "start": 439.595,
+   "dur": 37.279,
+   "cues": [
+    0.8,
+    2.515,
+    14.032,
+    20.214,
+    28.638
+   ],
+   "lines": [
+    {
+     "text": "Det är hela bilden.",
+     "start": 440.395,
+     "end": 441.66
+    },
+    {
+     "text": "En modell som förutsäger text. En lista som håller kontexten. Verktyg som låter texten agera. Och en loop som fortsätter tills jobbet är klart.",
+     "start": 442.11,
+     "end": 453.178
+    },
+    {
+     "text": "Runt omkring: komprimering, minne, färdigheter, underagenter och ett hjärtslag.",
+     "start": 453.627,
+     "end": 459.36
+    },
+    {
+     "text": "Du kan bygga varje del på en eftermiddag. Koden för varje steg, källorna och en interaktiv guide finns länkade nedan.",
+     "start": 459.81,
+     "end": 467.784
+    },
+    {
+     "text": "Bygg en själv. Det är det bästa sättet att förstå vart det här är på väg.",
+     "start": 468.234,
+     "end": 473.274
+    }
+   ]
+  }
+ ],
+ "end_hold": 2.5
+}

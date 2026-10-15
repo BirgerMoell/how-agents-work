@@ -1,0 +1,111 @@
+{
+  "lang": "sv",
+  "title": "Så fungerar AI-agenter",
+  "scenes": [
+    {"id": "intro", "chapter": "Inledning", "lines": [
+      "Fråga en språkmodell vad meningen med livet är, så får du ett svar.",
+      "Fråga den vilken fil på din dator som är störst, så kan den inte svara.",
+      "Den kan bara skriva text.",
+      "En agent är vad du får när du låter den texten göra saker.",
+      "Under de närmaste minuterna bygger vi en från grunden, bit för bit.",
+      "Efteråt vet du hur verktyg som Claude Code, Codex och OpenClaw fungerar under ytan.",
+      "Det är enklare än du tror."
+    ]},
+    {"id": "model", "chapter": "Modellen", "lines": [
+      "Vi börjar med hjärnan.",
+      "En stor språkmodell gör en enda sak: givet en text förutsäger den nästa token, ett ord eller en del av ett ord.",
+      "Sedan gör den det igen, och igen.",
+      "Det är allt.",
+      "Den har inget minne mellan anropen, ingen klocka och inga händer.",
+      "Allt den vet om din situation måste finnas i texten du skickar.",
+      "Den texten kallas kontexten."
+    ]},
+    {"id": "list", "chapter": "En chatt är en lista", "lines": [
+      "Hur kommer en chattbot då ihåg samtalet?",
+      "Det gör den inte. Programmet gör det.",
+      "Programmet sparar en lista med meddelanden: ett systemmeddelande med instruktioner, ditt meddelande och modellens svar.",
+      "Varje gång du säger något skickas hela listan igen.",
+      "Här är en komplett chattbot, på ungefär tio rader Python.",
+      "Listan som heter context är det enda minne som finns."
+    ]},
+    {"id": "tool", "chapter": "Verktyg", "lines": [
+      "Nu kommer tricket som gör en chattbot till en agent.",
+      "Tillsammans med meddelandena skickar vi en beskrivning av ett verktyg: ett namn, vad det gör och vilka argument det tar. Här en klocka.",
+      "Modellen kan inte köra något själv. Men den kan svara med ett särskilt meddelande som säger: anropa klockan.",
+      "Vårt program ser det, kör den riktiga funktionen och lägger till resultatet i listan som ett nytt meddelande.",
+      "Sedan frågar vi modellen igen. Nu finns tiden i kontexten, och den kan svara: i morgon är det fredag.",
+      "Modellen ber. Programmet agerar."
+    ]},
+    {"id": "loop", "chapter": "Loopen", "lines": [
+      "Lägg det i en loop, så har du en agent.",
+      "Anropa modellen. Om den ber om verktyg, kör dem, lägg till resultaten och anropa den igen.",
+      "Om den svarar utan att be om ett verktyg är den klar.",
+      "Modellen bestämmer hur många steg den behöver. Vår kod sätter bara ett tak.",
+      "Varje agent du har hört talas om, från kodassistenter till personliga assistenter, är en variant av den här loopen."
+    ]},
+    {"id": "trace", "chapter": "En riktig körning", "lines": [
+      "Här är en riktig körning, med en lokal modell på en bärbar dator.",
+      "Uppgiften: vilken Python-fil i den här mappen är längst, och vad gör den?",
+      "Vi sa aldrig hur. Den listar filerna.",
+      "Sedan bestämmer den sig för att räkna raderna med ett terminalkommando, och vårt program ber oss om lov först.",
+      "Den läser den längsta filen och svarar. Allt tog ungefär tretton sekunder.",
+      "Vi gav den bara lov att titta. Resten listade den ut själv."
+    ]},
+    {"id": "bash", "chapter": "Ett verktyg för allt", "lines": [
+      "Verktyg kan vara vad som helst som ett program kan göra: söka på webben, läsa en PDF, skicka ett mejl, fråga en databas.",
+      "Ett verktyg är speciellt.",
+      "Ge en agent en terminal, så kan den köra vilket kommando som helst på datorn.",
+      "Modellerna har läst miljontals terminalkommandon, så ett enda verktyg låser upp tusentals förmågor.",
+      "Det är så kodagenter fungerar. Det är också därför de kan vara farliga."
+    ]},
+    {"id": "context", "chapter": "Kontexthantering", "lines": [
+      "Det leder oss till det verkliga ingenjörsproblemet: kontexten.",
+      "Allt hamnar där. Systemprompten, verktygsbeskrivningarna, färdigheterna, minnet, samtalet och varje verktygsresultat.",
+      "Och alltihop skickas igen i varje enskilt steg.",
+      "Den fylls snabbt. En enda lång fil kan lägga till tusentals tokens på en gång.",
+      "Större kontext kostar mer, och efter en viss punkt blir modellen sämre på att använda den.",
+      "När fönstret nästan är fullt komprimerar agenten därför. Modellen sammanfattar den äldre delen, och sammanfattningen ersätter den. De senaste meddelandena behålls ordagrant.",
+      "Något går alltid förlorat. Att välja vad som ska behållas är konsten.",
+      "Därför talar man nu om kontexthantering, inte om promptformulering."
+    ]},
+    {"id": "memory", "chapter": "Minne", "lines": [
+      "Kontexten försvinner när programmet stängs. Minne är hur en agent kommer ihåg mellan sessioner.",
+      "Den enklaste varianten är en fil. Ge agenten ett verktyg för att skriva en anteckning, och läs in anteckningarna i kontexten nästa gång.",
+      "Riktiga system lägger till sökning, antingen vanlig ordsökning eller vektorsökning med inbäddningar, för att bara hämta de minnen som spelar roll.",
+      "Och att glömma är också viktigt. Ett minne fullt av struntsaker är bara mer brus i kontexten."
+    ]},
+    {"id": "skills", "chapter": "Färdigheter", "lines": [
+      "Färdigheter, på engelska skills, löser samma problem för kunnande.",
+      "En färdighet är en mapp med en kort beskrivning och en uppsättning instruktioner.",
+      "Från början hamnar bara beskrivningarna, en rad var, i kontexten.",
+      "När en uppgift passar laddar agenten in de fullständiga instruktionerna, och först då.",
+      "Hundra färdigheter kostar hundra rader, inte hundra manualer. En agent kan till och med skriva nya färdigheter åt sig själv."
+    ]},
+    {"id": "subagents", "chapter": "Underagenter", "lines": [
+      "Underagenter är samma idé, en nivå upp.",
+      "En underagent är bara en annan kontextlista, med egna instruktioner och verktyg, som körs genom samma loop.",
+      "Huvudagenten ger den en uppgift. Underagenten kanske läser tjugo filer, men bara dess korta rapport kommer tillbaka.",
+      "Huvudkontexten hålls ren, och flera underagenter kan arbeta samtidigt."
+    ]},
+    {"id": "heartbeat", "chapter": "Självständighet", "lines": [
+      "Hittills agerar agenten bara när du skriver.",
+      "Självständighet betyder att den kan agera på egen hand.",
+      "OpenClaw använder ett hjärtslag. Var trettionde minut vaknar agenten, läser en enkel checklista, gör det som behövs och somnar om.",
+      "Du behåller kontrollen genom att redigera checklistan."
+    ]},
+    {"id": "safety", "chapter": "Säkerhet", "lines": [
+      "Mer förmåga betyder mer risk. En agent som kan skicka din e-post kan skicka fel e-post.",
+      "Språkmodeller är inte deterministiska. Och text utifrån, en webbsida eller ett dokument, kan innehålla instruktioner som försöker ta över agenten. Det kallas promptinjektion.",
+      "Behandla därför allt en agent läser som data, aldrig som order.",
+      "Ge den minsta möjliga åtkomst som räcker för uppgiften. Fråga en människa innan något som inte går att ångra. Håll hemligheter utom räckhåll. Och logga allt.",
+      "Förmåga och säkerhet är en avvägning. Gör den medvetet."
+    ]},
+    {"id": "outro", "chapter": "Bygg en själv", "lines": [
+      "Det är hela bilden.",
+      "En modell som förutsäger text. En lista som håller kontexten. Verktyg som låter texten agera. Och en loop som fortsätter tills jobbet är klart.",
+      "Runt omkring: komprimering, minne, färdigheter, underagenter och ett hjärtslag.",
+      "Du kan bygga varje del på en eftermiddag. Koden för varje steg, källorna och en interaktiv guide finns länkade nedan.",
+      "Bygg en själv. Det är det bästa sättet att förstå vart det här är på väg."
+    ]}
+  ]
+}

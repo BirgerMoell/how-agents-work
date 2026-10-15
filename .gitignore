@@ -1,0 +1,9 @@
+work/
+build/
+__pycache__/
+.venv/
+.DS_Store
+practice/memory.md
+practice/HEARTBEAT.md
+practice/heartbeat-log.md
+practice/inbox.txt

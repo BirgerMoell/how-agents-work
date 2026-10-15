@@ -1,0 +1,610 @@
+{
+ "lang": "en",
+ "title": "How AI agents work",
+ "duration": 404.506,
+ "scenes": [
+  {
+   "id": "intro",
+   "chapter": "Introduction",
+   "start": 0.0,
+   "dur": 27.709,
+   "cues": [
+    0.8,
+    5.479,
+    9.475,
+    11.398,
+    15.108,
+    19.38,
+    24.988
+   ],
+   "lines": [
+    {
+     "text": "Ask a language model what the meaning of life is, and it will give you an answer.",
+     "start": 0.8,
+     "end": 5.029
+    },
+    {
+     "text": "Ask it which file on your computer is the largest, and it can't.",
+     "start": 5.479,
+     "end": 9.025
+    },
+    {
+     "text": "It can only write text.",
+     "start": 9.475,
+     "end": 10.948
+    },
+    {
+     "text": "An agent is what you get when you let that text do things.",
+     "start": 11.398,
+     "end": 14.658
+    },
+    {
+     "text": "In the next few minutes we will build one from nothing, piece by piece.",
+     "start": 15.108,
+     "end": 18.93
+    },
+    {
+     "text": "By the end, you will know how tools like Claude Code, Codex and OpenClaw work underneath.",
+     "start": 19.38,
+     "end": 24.538
+    },
+    {
+     "text": "It is simpler than you think.",
+     "start": 24.988,
+     "end": 26.609
+    }
+   ]
+  },
+  {
+   "id": "model",
+   "chapter": "The model",
+   "start": 27.709,
+   "dur": 25.101,
+   "cues": [
+    0.8,
+    2.418,
+    9.697,
+    11.841,
+    13.206,
+    17.291,
+    22.041
+   ],
+   "lines": [
+    {
+     "text": "Start with the brain.",
+     "start": 28.509,
+     "end": 29.676
+    },
+    {
+     "text": "A large language model does one thing: given some text, it predicts the next token, a word or a piece of a word.",
+     "start": 30.126,
+     "end": 36.956
+    },
+    {
+     "text": "Then it does it again, and again.",
+     "start": 37.406,
+     "end": 39.099
+    },
+    {
+     "text": "That is all.",
+     "start": 39.549,
+     "end": 40.465
+    },
+    {
+     "text": "It has no memory between calls, no clock, and no hands.",
+     "start": 40.915,
+     "end": 44.549
+    },
+    {
+     "text": "Everything it knows about your situation has to be in the text you send it.",
+     "start": 44.999,
+     "end": 49.299
+    },
+    {
+     "text": "That text is called the context.",
+     "start": 49.749,
+     "end": 51.709
+    }
+   ]
+  },
+  {
+   "id": "list",
+   "chapter": "A chat is a list",
+   "start": 52.809,
+   "dur": 24.422,
+   "cues": [
+    0.8,
+    3.886,
+    6.165,
+    12.712,
+    16.312,
+    20.152
+   ],
+   "lines": [
+    {
+     "text": "So how does a chatbot remember the conversation?",
+     "start": 53.609,
+     "end": 56.245
+    },
+    {
+     "text": "It doesn't. The program does.",
+     "start": 56.695,
+     "end": 58.524
+    },
+    {
+     "text": "It keeps a list of messages: a system message with instructions, your message, and the model's reply.",
+     "start": 58.974,
+     "end": 65.071
+    },
+    {
+     "text": "Every time you say something, the whole list is sent again.",
+     "start": 65.521,
+     "end": 68.672
+    },
+    {
+     "text": "Here is a complete chatbot, in about ten lines of Python.",
+     "start": 69.122,
+     "end": 72.512
+    },
+    {
+     "text": "The list called context is the only memory there is.",
+     "start": 72.962,
+     "end": 76.132
+    }
+   ]
+  },
+  {
+   "id": "tool",
+   "chapter": "Tools",
+   "start": 77.232,
+   "dur": 34.555,
+   "cues": [
+    0.8,
+    3.966,
+    11.919,
+    18.324,
+    24.569,
+    31.152
+   ],
+   "lines": [
+    {
+     "text": "Now the trick that turns a chatbot into an agent.",
+     "start": 78.032,
+     "end": 80.748
+    },
+    {
+     "text": "Along with the messages, we send a description of a tool: a name, what it does, and which arguments it takes. Here, a clock.",
+     "start": 81.198,
+     "end": 88.701
+    },
+    {
+     "text": "The model cannot run anything. But it can answer with a special message that says: please call the clock.",
+     "start": 89.151,
+     "end": 95.106
+    },
+    {
+     "text": "Our program sees that, runs the real function, and adds the result to the list as a new message.",
+     "start": 95.556,
+     "end": 101.351
+    },
+    {
+     "text": "Then we ask the model again. Now the time is in its context, and it can answer: tomorrow is Friday.",
+     "start": 101.801,
+     "end": 107.934
+    },
+    {
+     "text": "The model asks. The program acts.",
+     "start": 108.384,
+     "end": 110.687
+    }
+   ]
+  },
+  {
+   "id": "loop",
+   "chapter": "The loop",
+   "start": 111.787,
+   "dur": 24.419,
+   "cues": [
+    0.8,
+    3.489,
+    8.822,
+    12.249,
+    17.255
+   ],
+   "lines": [
+    {
+     "text": "Put that in a loop, and you have an agent.",
+     "start": 112.587,
+     "end": 114.825
+    },
+    {
+     "text": "Call the model. If it asks for tools, run them, add the results, and call it again.",
+     "start": 115.275,
+     "end": 120.158
+    },
+    {
+     "text": "If it answers without asking for a tool, it is done.",
+     "start": 120.608,
+     "end": 123.586
+    },
+    {
+     "text": "The model decides how many steps it needs. Our code only sets the maximum.",
+     "start": 124.036,
+     "end": 128.592
+    },
+    {
+     "text": "Every agent you have heard of, from coding assistants to personal assistants, is a variation of this loop.",
+     "start": 129.042,
+     "end": 135.106
+    }
+   ]
+  },
+  {
+   "id": "trace",
+   "chapter": "A real run",
+   "start": 136.206,
+   "dur": 28.748,
+   "cues": [
+    0.8,
+    4.458,
+    9.499,
+    12.441,
+    18.595,
+    23.924
+   ],
+   "lines": [
+    {
+     "text": "Here is a real run, on a local model on a laptop.",
+     "start": 137.006,
+     "end": 140.214
+    },
+    {
+     "text": "The task: which Python file in this folder is the longest, and what does it do?",
+     "start": 140.664,
+     "end": 145.255
+    },
+    {
+     "text": "We never told it how. It lists the files.",
+     "start": 145.705,
+     "end": 148.197
+    },
+    {
+     "text": "Then it decides to count the lines with a shell command, and our program asks us for permission first.",
+     "start": 148.647,
+     "end": 154.351
+    },
+    {
+     "text": "It reads the longest file, and answers. Three tools, about thirteen seconds.",
+     "start": 154.801,
+     "end": 159.68
+    },
+    {
+     "text": "All we did was give it permission to look. It figured out the rest.",
+     "start": 160.13,
+     "end": 163.854
+    }
+   ]
+  },
+  {
+   "id": "bash",
+   "chapter": "One tool to rule them all",
+   "start": 164.954,
+   "dur": 25.131,
+   "cues": [
+    0.8,
+    7.653,
+    9.436,
+    13.688,
+    19.849
+   ],
+   "lines": [
+    {
+     "text": "Tools can be anything a program can do: search the web, read a PDF, send an email, query a database.",
+     "start": 165.754,
+     "end": 172.156
+    },
+    {
+     "text": "One tool is special.",
+     "start": 172.606,
+     "end": 173.94
+    },
+    {
+     "text": "Give an agent a shell, and it can run any command on the computer.",
+     "start": 174.39,
+     "end": 178.192
+    },
+    {
+     "text": "Models have read millions of shell commands, so a single tool unlocks thousands of abilities.",
+     "start": 178.642,
+     "end": 184.353
+    },
+    {
+     "text": "That is how coding agents work. It is also why they can be dangerous.",
+     "start": 184.803,
+     "end": 188.985
+    }
+   ]
+  },
+  {
+   "id": "context",
+   "chapter": "Context engineering",
+   "start": 190.085,
+   "dur": 47.15,
+   "cues": [
+    0.8,
+    4.823,
+    12.976,
+    16.5,
+    21.432,
+    26.785,
+    37.534,
+    41.504
+   ],
+   "lines": [
+    {
+     "text": "Which brings us to the real engineering problem: the context.",
+     "start": 190.885,
+     "end": 194.459
+    },
+    {
+     "text": "Everything goes in it. The system prompt, the tool descriptions, the skills, the memory, the conversation, and every tool result.",
+     "start": 194.909,
+     "end": 202.611
+    },
+    {
+     "text": "And the whole thing is sent again on every single step.",
+     "start": 203.061,
+     "end": 206.136
+    },
+    {
+     "text": "It fills up fast. One long file can add thousands of tokens at once.",
+     "start": 206.586,
+     "end": 211.067
+    },
+    {
+     "text": "Bigger contexts cost more, and past a point, the model gets worse at using them.",
+     "start": 211.517,
+     "end": 216.42
+    },
+    {
+     "text": "So when the window is nearly full, agents compact. The model summarises the older part, and the summary replaces it. The latest messages are kept word for word.",
+     "start": 216.87,
+     "end": 227.17
+    },
+    {
+     "text": "Something is always lost. Deciding what to keep is the art.",
+     "start": 227.62,
+     "end": 231.139
+    },
+    {
+     "text": "This is why people now talk about context engineering, not prompt engineering.",
+     "start": 231.589,
+     "end": 236.135
+    }
+   ]
+  },
+  {
+   "id": "memory",
+   "chapter": "Memory",
+   "start": 237.235,
+   "dur": 29.666,
+   "cues": [
+    0.8,
+    7.56,
+    15.277,
+    23.276
+   ],
+   "lines": [
+    {
+     "text": "The context disappears when the program stops. Memory is how an agent remembers across sessions.",
+     "start": 238.035,
+     "end": 244.346
+    },
+    {
+     "text": "The simplest version is a file. Give the agent a tool to write a note, and read the notes back into the context next time.",
+     "start": 244.796,
+     "end": 252.062
+    },
+    {
+     "text": "Real systems add search, either plain keyword search or vector search with embeddings, to pull in only the memories that matter.",
+     "start": 252.512,
+     "end": 260.061
+    },
+    {
+     "text": "And forgetting matters too. A memory full of trivia is just more noise in the context.",
+     "start": 260.511,
+     "end": 265.801
+    }
+   ]
+  },
+  {
+   "id": "skills",
+   "chapter": "Skills",
+   "start": 266.901,
+   "dur": 25.474,
+   "cues": [
+    0.8,
+    3.528,
+    8.123,
+    12.476,
+    17.264
+   ],
+   "lines": [
+    {
+     "text": "Skills solve the same problem for know-how.",
+     "start": 267.701,
+     "end": 269.979
+    },
+    {
+     "text": "A skill is a folder with a short description and a set of instructions.",
+     "start": 270.429,
+     "end": 274.575
+    },
+    {
+     "text": "At the start, only the one-line descriptions go into the context.",
+     "start": 275.025,
+     "end": 278.927
+    },
+    {
+     "text": "When a task matches, the agent loads the full instructions, and only then.",
+     "start": 279.377,
+     "end": 283.715
+    },
+    {
+     "text": "A hundred skills cost a hundred lines, not a hundred manuals. And an agent can even write new skills for itself.",
+     "start": 284.165,
+     "end": 291.275
+    }
+   ]
+  },
+  {
+   "id": "subagents",
+   "chapter": "Sub-agents",
+   "start": 292.375,
+   "dur": 23.719,
+   "cues": [
+    0.8,
+    4.04,
+    10.958,
+    18.031
+   ],
+   "lines": [
+    {
+     "text": "Sub-agents are the same idea, one level up.",
+     "start": 293.175,
+     "end": 295.965
+    },
+    {
+     "text": "A sub-agent is just another context list, with its own instructions and tools, run through the same loop.",
+     "start": 296.415,
+     "end": 302.883
+    },
+    {
+     "text": "The main agent hands it a task. The sub-agent might read twenty files, but only its short report comes back.",
+     "start": 303.334,
+     "end": 309.957
+    },
+    {
+     "text": "The main context stays clean, and several sub-agents can work in parallel.",
+     "start": 310.406,
+     "end": 314.994
+    }
+   ]
+  },
+  {
+   "id": "heartbeat",
+   "chapter": "Autonomy",
+   "start": 316.094,
+   "dur": 19.447,
+   "cues": [
+    0.8,
+    3.765,
+    6.457,
+    15.808
+   ],
+   "lines": [
+    {
+     "text": "So far, the agent only acts when you type.",
+     "start": 316.894,
+     "end": 319.409
+    },
+    {
+     "text": "Autonomy means it can act on its own.",
+     "start": 319.859,
+     "end": 322.101
+    },
+    {
+     "text": "OpenClaw uses a heartbeat. Every thirty minutes the agent wakes up, reads a plain checklist file, does what is needed, and goes back to sleep.",
+     "start": 322.551,
+     "end": 331.451
+    },
+    {
+     "text": "You stay in control by editing the checklist.",
+     "start": 331.901,
+     "end": 334.441
+    }
+   ]
+  },
+  {
+   "id": "safety",
+   "chapter": "Safety",
+   "start": 335.541,
+   "dur": 37.542,
+   "cues": [
+    0.8,
+    6.416,
+    19.178,
+    23.481,
+    32.83
+   ],
+   "lines": [
+    {
+     "text": "More power means more risk. An agent that can send your email can send the wrong email.",
+     "start": 336.341,
+     "end": 341.507
+    },
+    {
+     "text": "Language models are not deterministic. And text from the outside world, a web page or a document, can contain instructions that try to take over the agent. This is called prompt injection.",
+     "start": 341.957,
+     "end": 354.269
+    },
+    {
+     "text": "So treat everything an agent reads as data, never as orders.",
+     "start": 354.719,
+     "end": 358.572
+    },
+    {
+     "text": "Give it the least access that gets the job done. Ask a human before anything that cannot be undone. Keep secrets out of reach. And log everything.",
+     "start": 359.022,
+     "end": 367.921
+    },
+    {
+     "text": "Capability and safety are a trade-off. Choose it deliberately.",
+     "start": 368.371,
+     "end": 371.983
+    }
+   ]
+  },
+  {
+   "id": "outro",
+   "chapter": "Build one",
+   "start": 373.083,
+   "dur": 31.423,
+   "cues": [
+    0.8,
+    2.708,
+    11.667,
+    16.034,
+    23.634
+   ],
+   "lines": [
+    {
+     "text": "That is the whole picture.",
+     "start": 373.883,
+     "end": 375.341
+    },
+    {
+     "text": "A model that predicts text. A list that holds the context. Tools that let the text act. And a loop that keeps going until the job is done.",
+     "start": 375.791,
+     "end": 384.3
+    },
+    {
+     "text": "Around it: compaction, memory, skills, sub-agents, and a heartbeat.",
+     "start": 384.75,
+     "end": 388.666
+    },
+    {
+     "text": "You can build every piece in an afternoon. The code for each step, the sources, and an interactive guide are linked below.",
+     "start": 389.116,
+     "end": 396.266
+    },
+    {
+     "text": "Build one yourself. It is the best way to understand where this is going.",
+     "start": 396.716,
+     "end": 400.906
+    }
+   ]
+  }
+ ],
+ "end_hold": 2.5
+}

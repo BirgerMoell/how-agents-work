@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Så fungerar AI-agenter</title>
+<meta name="description" content="En video, en animerad presentation, körbar kod och en interaktiv guide som förklarar hur AI-agenter fungerar, byggda från grunden, bit för bit.">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><span>●</span> Så fungerar agenter</a>
+  <nav>
+    <a href="#video">Video</a><a href="#begrepp">Begrepp</a><a href="#korning">En körning</a><a href="#bygg">Bygg en</a><a href="#kallor">Källor</a>
+  </nav>
+  <a class="pill" href="../" hreflang="en">English</a>
+  <button class="pill" data-theme-toggle aria-label="Växla ljust och mörkt läge" style="background:none;cursor:pointer">◐</button>
+</div></header>
+
+<main class="wrap">
+<div class="hero">
+  <h1>Så fungerar <em>AI-agenter</em></h1>
+  <p class="lead">En agent är en språkmodell i en loop som kan använda verktyg. Den meningen förklarar Claude Code, Codex och OpenClaw. Den här guiden bygger en från grunden, bit för bit, med en video, en animerad presentation och kod som du kan köra på din egen dator.</p>
+  <div class="cta">
+    <a class="btn primary" href="#video">Se videon (8 min)</a>
+    <a class="btn" href="../explainer/?lang=sv&amp;mode=present">Öppna presentationen</a>
+    <a class="btn" href="https://github.com/BirgerMoell/how-agents-work/tree/main/practice">Hämta koden</a>
+  </div>
+</div>
+
+<div id="video" class="video">
+  <video controls preload="metadata" poster="../video/poster.sv.jpg">
+    <source src="../video/how-agents-work.sv.mp4" type="video/mp4">
+    <track kind="captions" src="../video/how-agents-work.sv.vtt" srclang="sv" label="Svenska" default>
+  </video>
+</div>
+<p class="note">Varje bildruta ritas av kod, samma kod som driver den <a href="../explainer/?lang=sv">interaktiva versionen</a>. I <a href="../explainer/?lang=sv&amp;mode=present">presentationsläget</a> spelar varje knapptryckning nästa steg, med berättarrösten som talaranteckningar. Röst: Supertonic 3, körd lokalt. <a href="../video/how-agents-work.sv.mp4" download>Ladda ned MP4</a> · <a href="../video/how-agents-work.sv.srt" download>undertexter</a> · <a href="../">English version</a></p>
+
+<section id="ide">
+  <h2><span class="n">01</span>Hela idén i fyra delar</h2>
+  <p class="kicker">Allt annat i guiden är förfiningar av de här fyra.</p>
+  <div class="grid">
+    <div class="card"><span class="tag">hjärna</span><h4>En modell som förutsäger text</h4><p>Givet en text förutsäger den nästa token. Inget minne, ingen klocka, inga händer.</p></div>
+    <div class="card"><span class="tag">minne</span><h4>En lista som kallas kontexten</h4><p>Varje meddelande sparas i en lista, och hela listan skickas i varje anrop.</p></div>
+    <div class="card"><span class="tag">händer</span><h4>Verktyg</h4><p>Modellen ber om att en funktion ska anropas. Ditt program kör den och lägger till resultatet.</p></div>
+    <div class="card"><span class="tag">motor</span><h4>En loop</h4><p>Fortsätt anropa modellen så länge den ber om verktyg. Sluta när den svarar.</p></div>
+  </div>
+</section>
+
+<section id="begrepp">
+  <h2><span class="n">02</span>Begreppen, ett i taget</h2>
+  <p class="kicker">Varje begrepp har ett körbart steg i <a href="https://github.com/BirgerMoell/how-agents-work/tree/main/practice"><code>practice/</code></a>. Koden är på engelska, liksom kommentarerna. Utdragen nedan är förkortade versioner av filerna.</p>
+
+  <div class="concept">
+    <div>
+      <h3>Modellen förutsäger nästa token</h3>
+      <p>En stor språkmodell gör en enda sak: givet en text förutsäger den nästa token, ett ord eller en del av ett ord, och gör sedan det igen. Den har inget minne mellan anropen, den vet inte vad klockan är och den kan inte röra något.</p>
+      <p>Allt den vet om din situation måste finnas i texten du skickar. Den texten är <b>kontexten</b>.</p>
+    </div>
+    <pre>En agent är en modell i en ▁▁▁
+  loop        58 %
+  låda         8 %
+  chatt        7 %
+  webbläsare   4 %</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>En chatt är en lista</h3>
+      <p>Chattboten minns inte samtalet. Programmet gör det: det sparar en lista med meddelanden (ett systemmeddelande med instruktioner, dina meddelanden och modellens svar) och skickar hela listan varje gång.</p>
+      <p>Mönstret kommer från Thomas Ptaceks <a href="https://fly.io/blog/everyone-write-an-agent/">”You Should Write An Agent”</a>, och det är det enda minne en modell har. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/01_chat.py">01_chat.py</a></p>
+    </div>
+<pre>context = [{"role": "system", "content": "..."}]
+
+while True:
+    line = input("You: ")
+    context.append({"role": "user", "content": line})
+    reply = call(context)          # hela listan
+    context.append({"role": "assistant", "content": reply})
+    print(reply)</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Verktyg: modellen ber, programmet agerar</h3>
+      <p>Tillsammans med meddelandena skickar du beskrivningar av verktyg: ett namn, vad det gör och dess argument som JSON Schema. Modellen kan inte köra något, men den kan svara med ett <b>verktygsanrop</b>: ”anropa <code>clock</code>”.</p>
+      <p>Ditt program kör den riktiga funktionen, lägger till resultatet i listan och anropar modellen igen. Nu finns svaret i kontexten. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/02_one_tool.py">02_one_tool.py</a></p>
+    </div>
+<pre>{"type": "function", "function": {
+   "name": "clock",
+   "description": "Returns the current local date and time.",
+   "parameters": {"type": "object", "properties": {}}}}
+
+# modellen svarar:   tool_call: clock()
+# programmet kör:    clock() -> "Thursday 15 October 2026, 12:12"
+# modellen svarar:   "Tomorrow is Friday."</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Loopen är agenten</h3>
+      <p>Lägg verktygssteget i en loop. Anropa modellen; om den ber om verktyg, kör dem, lägg till resultaten och anropa den igen; om den svarar utan verktygsanrop är den klar.</p>
+      <p>Modellen bestämmer hur många steg den behöver. Din kod sätter bara ett tak. Varje agentprodukt är en variant av de här åtta raderna. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/03_agent_loop.py">03_agent_loop.py</a></p>
+    </div>
+<pre>for step in range(MAX_STEPS):
+    reply = call(context, tools)
+    context.append(reply)
+    if not reply.tool_calls:
+        return reply.content          # klar
+    for request in reply.tool_calls:
+        result = run(request)
+        context.append(result)</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Ett verktyg för allt: terminalen</h3>
+      <p>Verktyg kan vara allt som kod kan göra. Ett är speciellt: ett <code>bash</code>-verktyg låter agenten köra vilket kommando som helst på datorn. Modellerna har läst miljontals terminalkommandon, så ett verktyg låser upp tusentals förmågor. Så fungerar kodagenter, och därför behöver de skyddsräcken.</p>
+      <p>I övningskoden måste du godkänna varje terminalkommando först.</p>
+    </div>
+<pre>def run(name, a):
+    if name == "bash":
+        if input(f"allow? $ {a['command']} [y/N] ") != "y":
+            return "The user refused to run this command."
+        p = subprocess.run(a["command"], shell=True,
+                           capture_output=True, text=True, timeout=60)
+        return (p.stdout + p.stderr)[-20_000:]</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Kontexthantering och komprimering</h3>
+      <p>Allt ligger i kontexten: systemprompten, verktygsbeskrivningarna, färdigheterna, minnet, samtalet och varje verktygsresultat, och alltihop skickas om i varje steg. Den fylls snabbt, kostar mer ju större den blir, och efter en viss punkt blir modellen sämre på att använda den.</p>
+      <p>När den nästan är full <b>komprimerar</b> agenten: modellen sammanfattar den äldre delen och sammanfattningen ersätter den, medan de senaste meddelandena behålls ordagrant. Något går alltid förlorat. Att välja vad som ska behållas är <b>kontexthantering</b> (context engineering). <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/04_context.py">04_context.py</a></p>
+    </div>
+<pre>def compact(context):
+    system, old, recent = context[0], context[1:-4], context[-4:]
+    summary = call([{"role": "user", "content":
+        "Summarise this conversation in under 120 words. "
+        "Keep names, numbers, decisions and open questions."
+        + transcript(old)}]).content
+    return [system, {"role": "user", "content": summary}] + recent</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Minne mellan sessioner</h3>
+      <p>Kontexten försvinner när programmet stängs. Det enklaste minnet är en fil: ge agenten ett <code>remember</code>-verktyg och läs in filen i systemprompten nästa gång.</p>
+      <p>Riktiga system lägger till sökning, ordsökning (grep) eller vektorsökning med inbäddningar, så att bara relevanta minnen hamnar i kontexten. Att glömma är också viktigt: ett minne fullt av struntsaker är brus. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/05_memory.py">05_memory.py</a></p>
+    </div>
+<pre>TOOLS = [tool("remember", "Save one short fact worth "
+              "remembering in future sessions.", fact="The fact")]
+
+def execute(name, a):
+    with open("memory.md", "a") as f:
+        f.write(f"- {date.today()}: {a['fact']}\n")
+    return "saved"
+
+system = "What you remember:\n" + open("memory.md").read()</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Färdigheter: kunnande som laddas vid behov</h3>
+      <p>En färdighet (skill) är en mapp med en <code>SKILL.md</code>: ett namn, en enradsbeskrivning och sedan instruktioner. Bara beskrivningarna hamnar i kontexten från början; när en uppgift passar anropar agenten <code>load_skill</code> och de fullständiga instruktionerna kommer in. Hundra färdigheter kostar hundra rader. Formatet är den öppna standarden <a href="https://agentskills.io">Agent Skills</a>. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/06_skills.py">06_skills.py</a></p>
+    </div>
+<pre>---
+name: haiku
+description: Write a haiku about any topic. Use when the
+  user asks for a haiku or a very short poem.
+---
+
+# Haiku
+Write exactly three lines with 5, 7 and 5 syllables.
+Count the syllables of every word before answering.</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Underagenter: en annan lista, samma loop</h3>
+      <p>En underagent är en ny kontextlista med egna instruktioner och verktyg, som körs genom samma loop. Huvudagenten ger den en uppgift; den kanske läser tjugo filer, men bara dess korta rapport kommer tillbaka. Huvudkontexten hålls ren, och flera kan arbeta samtidigt. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/07_subagent.py">07_subagent.py</a></p>
+    </div>
+<pre>def delegate(name, a):
+    sub_context = [
+        {"role": "system", "content": "You are a research sub-agent. "
+            "Report your findings in at most 80 words."},
+        {"role": "user", "content": a["task"]}]
+    return loop(sub_context, READ_TOOLS, read_only)</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Självständighet: ett hjärtslag</h3>
+      <p>Hittills agerar agenten bara när du skriver. Ett hjärtslag väcker den med jämna mellanrum. OpenClaw gör det var 30:e minut: agenten läser en enkel checklista, gör det som behövs och somnar om. Du styr genom att redigera filen. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/08_heartbeat.py">08_heartbeat.py</a></p>
+    </div>
+<pre># HEARTBEAT.md
+- If there is a file called inbox.txt, summarise it in one sentence.
+- If nothing needs attention, answer exactly: NOTHING TO DO
+
+# heartbeat-log.md  (riktig utdata från övningskoden)
+## 2026-10-15 12:19
+The meeting has been rescheduled to Friday at 10:00,
+so remember to bring the budget draft.</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Säkerhet: förmåga är en avvägning</h3>
+      <p>En agent som kan skicka din e-post kan skicka fel e-post. Modeller är inte deterministiska, och text utifrån (en webbsida, ett dokument, ett mejl) kan innehålla instruktioner som försöker ta över agenten: <b>promptinjektion</b>. Behandla allt en agent läser som data, aldrig som order.</p>
+      <p>Simon Willisons <a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">”lethal trifecta”</a> är ett bra test: privat data, opålitligt innehåll och ett sätt att skicka ut data ska aldrig mötas i en och samma agent.</p>
+    </div>
+    <div class="grid" style="margin:0">
+      <div class="card"><h4>Minsta åtkomst</h4><p>Bara de verktyg och filer jobbet kräver.</p></div>
+      <div class="card"><h4>Fråga först</h4><p>En människa godkänner det som inte går att ångra.</p></div>
+      <div class="card"><h4>Hemligheter undan</h4><p>Nycklar och lösenord utom agentens synfält.</p></div>
+      <div class="card"><h4>Logga allt</h4><p>Varje verktygsanrop går att spåra efteråt.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="korning">
+  <h2><span class="n">03</span>Stega igenom en riktig körning</h2>
+  <p class="kicker">En inspelad körning av <code>03_agent_loop.py</code> med <code>qwen3.6:35b-a3b</code> på en bärbar dator, via Ollama. Uppgift (på engelska): ”Vilken Python-fil i den här mappen är längst, och vad gör den?” Tryck på nästa för att se hur kontexten ser ut efter varje modellanrop, och hur mycket som skickas om varje gång.</p>
+  <div class="sim" data-sim="../explainer/trace.json">
+    <div class="controls"><button class="primary" data-next></button><button data-reset></button><div class="meter"></div></div>
+    <div class="msgs" aria-live="polite"></div>
+  </div>
+  <p class="note">Antalet tokens är uppskattat till fyra tecken per token. Inget är redigerat: agenten valde själv de tre verktygen och bad om lov före terminalkommandot.</p>
+</section>
+
+<section id="bygg">
+  <h2><span class="n">04</span>Bygg en själv</h2>
+  <p class="kicker">Varje steg är en kort Python-fil som lägger till en idé. De körs med en lokal modell, så ingen API-nyckel behövs.</p>
+  <ol class="steps">
+    <li><b>Installera Ollama och en modell med verktygsstöd</b><span><a href="https://ollama.com">ollama.com</a>, sedan <code>ollama pull qwen3.6:35b-a3b</code>. Mindre datorer: <code>MODEL=gemma4:e2b</code>, eller någon annan modell med verktygsstöd.</span></li>
+    <li><b>Hämta koden</b><span><code>git clone https://github.com/BirgerMoell/how-agents-work &amp;&amp; cd how-agents-work/practice &amp;&amp; pip install openai</code></span></li>
+    <li><b>Kör stegen i ordning</b><span><code>python 01_chat.py</code>, sedan 02, 03 … 08. Läs varje fil först: de är 20 till 60 rader.</span></li>
+    <li><b>Hellre en molnmodell?</b><span>Sätt <code>OPENAI_API_KEY</code> och <code>MODEL</code>. Samma kod pratar med OpenAI:s API.</span></li>
+  </ol>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Fil</th><th>Lägger till</th><th>Prova</th></tr></thead>
+    <tbody>
+      <tr><td><code>01_chat.py</code></td><td>Kontextlistan</td><td>Berätta vad du heter och fråga sedan om det.</td></tr>
+      <tr><td><code>02_one_tool.py</code></td><td>Ett verktyg, anropat en gång</td><td>”Vilken veckodag är det i morgon?”</td></tr>
+      <tr><td><code>03_agent_loop.py</code></td><td>Loopen, tre verktyg och godkännande av terminalkommandon</td><td>Kör utan argument, eller ge den en uppgift.</td></tr>
+      <tr><td><code>04_context.py</code></td><td>Tokenbudget och komprimering</td><td>Be om långa svar och fråga sedan om något du sa först.</td></tr>
+      <tr><td><code>05_memory.py</code></td><td>Minne i en fil</td><td>Kör den två gånger.</td></tr>
+      <tr><td><code>06_skills.py</code></td><td>Färdigheter som laddas vid behov</td><td>”Skriv en haiku om regn.” Lägg till en egen färdighetsmapp.</td></tr>
+      <tr><td><code>07_subagent.py</code></td><td>Underagenter</td><td>Kör utan indata och se två kontexter arbeta.</td></tr>
+      <tr><td><code>08_heartbeat.py</code></td><td>En timer och en checklista</td><td>Lägg en fil som heter <code>inbox.txt</code> bredvid.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Utmaningar</h3>
+  <p>Från workshoppen agents-from-scratch i <a href="https://github.com/BirgerMoell/agents">BirgerMoell/agents</a>, där regeln är att skriva agenten utan AI-kodverktyg:</p>
+  <div class="grid">
+    <div class="card"><h4>Överraska dig själv</h4><p>Ge agenten ett verktyg och hitta en uppgift där den använder det på ett sätt du inte planerat.</p></div>
+    <div class="card"><h4>Skriv en färdighet</h4><p>Lär den något ditt team gör varje vecka, i en enda <code>SKILL.md</code>.</p></div>
+    <div class="card"><h4>Bättre komprimering</h4><p>Släng verktygsresultat först, behåll beslut. Mät vad agenten fortfarande minns.</p></div>
+    <div class="card"><h4>Riktig självständighet</h4><p>Låt hjärtslaget göra en nyttig sak om dagen, och logga varje handling.</p></div>
+  </div>
+</section>
+
+<section id="ordlista">
+  <h2><span class="n">05</span>Ord du kommer att möta</h2>
+  <div class="table-wrap"><table>
+    <tbody>
+      <tr><td><b>Token</b></td><td>Enheten en modell läser och skriver: ett ord eller en del av ett ord.</td></tr>
+      <tr><td><b>Kontextfönster</b></td><td>Det största antal tokens en modell kan ta emot i ett anrop, till exempel 200 000.</td></tr>
+      <tr><td><b>Systemprompt</b></td><td>Det första meddelandet: instruktioner som ramar in varje svar.</td></tr>
+      <tr><td><b>Verktygsanrop (function calling)</b></td><td>Ett strukturerat svar där modellen ber programmet köra en namngiven funktion med argument.</td></tr>
+      <tr><td><b>Harness</b></td><td>Allt runt modellen: loopen, verktygen, kontexthanteringen. Delen du bygger.</td></tr>
+      <tr><td><b>Komprimering (compaction)</b></td><td>Att ersätta äldre kontext med en sammanfattning när fönstret fylls.</td></tr>
+      <tr><td><b>RAG</b></td><td>Retrieval-augmented generation: sök i en kunskapsbas och lägg de relevanta bitarna i kontexten.</td></tr>
+      <tr><td><b>MCP</b></td><td><a href="https://modelcontextprotocol.io">Model Context Protocol</a>: ett standardsätt att koppla in externa verktyg i agenter.</td></tr>
+      <tr><td><b>Promptinjektion</b></td><td>Instruktioner gömda i innehåll som agenten läser, i syfte att ta över dess beteende.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="kallor">
+  <h2><span class="n">06</span>Källor och vidare läsning</h2>
+  <ul class="sources">
+    <li><a href="https://www.youtube.com/watch?v=DS6cwCkN5lg&amp;t=173s">Lecture 9: AI Agents, acting in the world through tools</a> · Birger Moëll (engelska)<span>Agenter som en språkmodell plus verktyg, standard-API:t för verktygsanrop, bash som universalverktyg, färdigheter, säkerhetsavvägningar, hjärtslag och minne i OpenClaw.</span></li>
+    <li><a href="https://www.youtube.com/watch?v=bnNSgrAEQiU&amp;t=699s">Lecture 8: Context Engineering</a> · Birger Moëll (engelska)<span>Varför kontext är en förutsättning för intelligens, vad som hamnar i en agents kontext, kostnad, komprimering, minnessökning och hallucinationer.</span></li>
+    <li><a href="https://github.com/BirgerMoell/agents">BirgerMoell/agents: Agents from Scratch</a><span>En agent i TypeScript skriven utan AI-verktyg, med färdigheter, lokala modeller via Ollama och 14 workshopdemos, från ett verktyg till en röstagent som bygger ut sig själv.</span></li>
+    <li><a href="https://fly.io/blog/everyone-write-an-agent/">You Should Write An Agent</a> · Thomas Ptacek, Fly.io, 6 november 2025<span>Chattboten på 15 rader, att lägga till ett verktyg, underagenter som extra kontextlistor och varför kontexthantering är riktig programmering.</span></li>
+    <li><a href="https://agentskills.io">Agent Skills</a><span>Det öppna formatet för färdigheter som används i steg 6.</span></li>
+    <li><a href="https://www.anthropic.com/engineering/building-effective-agents">Building effective agents</a> · Anthropic<span>Arbetsflöden kontra agenter, och när de enkla mönstren räcker.</span></li>
+    <li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a> · Anthropic</li>
+    <li><a href="https://platform.openai.com/docs/guides/function-calling">Function calling guide</a> · OpenAI<span>Formatet för verktygsanrop som övningskoden använder.</span></li>
+    <li><a href="https://github.com/openclaw/openclaw">OpenClaw</a> och <a href="https://docs.openclaw.ai">dokumentationen</a><span>En personlig agent med öppen källkod, med hjärtslag, minnesfiler och färdigheter.</span></li>
+    <li><a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">The lethal trifecta for AI agents</a> · Simon Willison</li>
+  </ul>
+</section>
+</main>
+
+<footer><div class="wrap">
+  Skapad av Birger Moëll. Animationerna ritas med kod i <a href="https://github.com/BirgerMoell/how-agents-work/tree/main/docs/explainer"><code>docs/explainer/</code></a> och renderas med headless Chromium och ffmpeg. Rösterna körs lokalt: Supertonic 3 (svenska) och Kokoro 82M (engelska). Kod: MIT-licens.
+  <br><a href="https://github.com/BirgerMoell/how-agents-work">github.com/BirgerMoell/how-agents-work</a>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

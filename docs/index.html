@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How AI agents work</title>
+<meta name="description" content="A video, an animated presentation, runnable code and an interactive guide that explain how AI agents work, built from nothing, piece by piece.">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><span>●</span> How agents work</a>
+  <nav>
+    <a href="#video">Video</a><a href="#concepts">Concepts</a><a href="#run">A real run</a><a href="#build">Build one</a><a href="#sources">Sources</a>
+  </nav>
+  <a class="pill" href="sv/" hreflang="sv">Svenska</a>
+  <button class="pill" data-theme-toggle aria-label="Toggle light and dark" style="background:none;cursor:pointer">◐</button>
+</div></header>
+
+<main class="wrap">
+<div class="hero">
+  <h1>How AI agents <em>work</em></h1>
+  <p class="lead">An agent is a language model in a loop that can use tools. That one sentence explains Claude Code, Codex and OpenClaw. This guide builds one from nothing, piece by piece, with a video, an animated presentation and code you can run on your own laptop.</p>
+  <div class="cta">
+    <a class="btn primary" href="#video">Watch the video (7 min)</a>
+    <a class="btn" href="explainer/?lang=en&amp;mode=present">Open the presentation</a>
+    <a class="btn" href="https://github.com/BirgerMoell/how-agents-work/tree/main/practice">Get the code</a>
+  </div>
+</div>
+
+<div id="video" class="video">
+  <video controls preload="metadata" poster="video/poster.en.jpg">
+    <source src="video/how-agents-work.en.mp4" type="video/mp4">
+    <track kind="captions" src="video/how-agents-work.en.vtt" srclang="en" label="English" default>
+  </video>
+</div>
+<p class="note">Every frame is drawn by code, the same code that runs the <a href="explainer/?lang=en">interactive version</a>. In the <a href="explainer/?lang=en&amp;mode=present">presentation mode</a> each key press plays the next step, with the narration as speaker notes. Narration: Kokoro 82M, running locally. <a href="video/how-agents-work.en.mp4" download>Download MP4</a> · <a href="video/how-agents-work.en.srt" download>subtitles</a> · <a href="sv/">svensk version</a></p>
+
+<section id="idea">
+  <h2><span class="n">01</span>The whole idea in four parts</h2>
+  <p class="kicker">Everything else in this guide is a refinement of these four.</p>
+  <div class="grid">
+    <div class="card"><span class="tag">brain</span><h4>A model that predicts text</h4><p>Given some text, it predicts the next token. No memory, no clock, no hands.</p></div>
+    <div class="card"><span class="tag">memory</span><h4>A list called the context</h4><p>Every message is kept in a list, and the whole list is sent on every call.</p></div>
+    <div class="card"><span class="tag">hands</span><h4>Tools</h4><p>The model asks for a function to be called. Your program runs it and adds the result.</p></div>
+    <div class="card"><span class="tag">engine</span><h4>A loop</h4><p>Keep calling the model while it asks for tools. Stop when it answers.</p></div>
+  </div>
+</section>
+
+<section id="concepts">
+  <h2><span class="n">02</span>Concepts, one at a time</h2>
+  <p class="kicker">Each concept has a runnable step in <a href="https://github.com/BirgerMoell/how-agents-work/tree/main/practice"><code>practice/</code></a>. The snippets below are shortened versions of those files.</p>
+
+  <div class="concept">
+    <div>
+      <h3>The model predicts the next token</h3>
+      <p>A large language model does one thing: given some text, it predicts the next token, a word or part of a word, and then does it again. It has no memory between calls, it does not know what time it is, and it cannot touch anything.</p>
+      <p>Everything it knows about your situation has to be in the text you send. That text is the <b>context</b>.</p>
+    </div>
+    <pre>An agent is a model in a ▁▁▁
+  loop      62 %
+  box        9 %
+  chat       7 %
+  browser    4 %</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>A chat is a list</h3>
+      <p>The chatbot does not remember the conversation. The program does: it keeps a list of messages (a system message with instructions, your messages, the model's replies) and sends the whole list every time.</p>
+      <p>This is the pattern from Thomas Ptacek's <a href="https://fly.io/blog/everyone-write-an-agent/">“You Should Write An Agent”</a>, and it is the only memory a model has. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/01_chat.py">01_chat.py</a></p>
+    </div>
+<pre>context = [{"role": "system", "content": "..."}]
+
+while True:
+    line = input("You: ")
+    context.append({"role": "user", "content": line})
+    reply = call(context)          # the whole list
+    context.append({"role": "assistant", "content": reply})
+    print(reply)</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Tools: the model asks, the program acts</h3>
+      <p>Along with the messages, you send descriptions of tools: a name, what it does, and its arguments as JSON Schema. The model cannot run anything, but it can reply with a <b>tool call</b>: “please call <code>clock</code>”.</p>
+      <p>Your program runs the real function, adds the result to the list as a new message, and calls the model again. Now the answer is in its context. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/02_one_tool.py">02_one_tool.py</a></p>
+    </div>
+<pre>{"type": "function", "function": {
+   "name": "clock",
+   "description": "Returns the current local date and time.",
+   "parameters": {"type": "object", "properties": {}}}}
+
+# the model replies:  tool_call: clock()
+# the program runs:   clock() -> "Thursday 15 October 2026, 12:12"
+# the model answers:  "Tomorrow is Friday."</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>The loop is the agent</h3>
+      <p>Put the tool step in a loop. Call the model; if it asks for tools, run them, add the results and call it again; if it answers without a tool call, it is done.</p>
+      <p>The model decides how many steps it needs. Your code only sets the maximum. Every agent product is a variation of these eight lines. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/03_agent_loop.py">03_agent_loop.py</a></p>
+    </div>
+<pre>for step in range(MAX_STEPS):
+    reply = call(context, tools)
+    context.append(reply)
+    if not reply.tool_calls:
+        return reply.content          # done
+    for request in reply.tool_calls:
+        result = run(request)
+        context.append(result)</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>One tool to rule them all: the shell</h3>
+      <p>Tools can be anything code can do. One is special: a <code>bash</code> tool lets the agent run any command on the computer. Models have read millions of shell commands, so one tool unlocks thousands of abilities. That is how coding agents work, and why they need guardrails.</p>
+      <p>In the practice code, every shell command needs your approval first.</p>
+    </div>
+<pre>def run(name, a):
+    if name == "bash":
+        if input(f"allow? $ {a['command']} [y/N] ") != "y":
+            return "The user refused to run this command."
+        p = subprocess.run(a["command"], shell=True,
+                           capture_output=True, text=True, timeout=60)
+        return (p.stdout + p.stderr)[-20_000:]</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Context engineering and compaction</h3>
+      <p>Everything lives in the context: system prompt, tool descriptions, skills, memory, the conversation and every tool result, and the whole thing is re-sent on every step. It fills up fast, costs more as it grows, and past a point the model gets worse at using it.</p>
+      <p>When it is nearly full, agents <b>compact</b>: the model summarises the older part, and the summary replaces it, while the latest messages are kept word for word. Something is always lost. Choosing what to keep is <b>context engineering</b>. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/04_context.py">04_context.py</a></p>
+    </div>
+<pre>def compact(context):
+    system, old, recent = context[0], context[1:-4], context[-4:]
+    summary = call([{"role": "user", "content":
+        "Summarise this conversation in under 120 words. "
+        "Keep names, numbers, decisions and open questions."
+        + transcript(old)}]).content
+    return [system, {"role": "user", "content": summary}] + recent</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Memory across sessions</h3>
+      <p>The context disappears when the program stops. The simplest memory is a file: give the agent a <code>remember</code> tool and read the file back into the system prompt next time.</p>
+      <p>Real systems add search, keyword search (grep) or vector search with embeddings, so only relevant memories enter the context. Forgetting matters too: a memory full of trivia is noise. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/05_memory.py">05_memory.py</a></p>
+    </div>
+<pre>TOOLS = [tool("remember", "Save one short fact worth "
+              "remembering in future sessions.", fact="The fact")]
+
+def execute(name, a):
+    with open("memory.md", "a") as f:
+        f.write(f"- {date.today()}: {a['fact']}\n")
+    return "saved"
+
+system = "What you remember:\n" + open("memory.md").read()</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Skills: know-how loaded on demand</h3>
+      <p>A skill is a folder with a <code>SKILL.md</code>: a name, a one-line description, then instructions. Only the descriptions go into the context at the start; when a task matches, the agent calls <code>load_skill</code> and the full instructions come in. A hundred skills cost a hundred lines. The format is the open <a href="https://agentskills.io">Agent Skills</a> standard. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/06_skills.py">06_skills.py</a></p>
+    </div>
+<pre>---
+name: haiku
+description: Write a haiku about any topic. Use when the
+  user asks for a haiku or a very short poem.
+---
+
+# Haiku
+Write exactly three lines with 5, 7 and 5 syllables.
+Count the syllables of every word before answering.</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Sub-agents: another list, the same loop</h3>
+      <p>A sub-agent is a fresh context list with its own instructions and tools, run through the same loop. The main agent hands it a task; it might read twenty files, but only its short report comes back. The main context stays clean, and several can run in parallel. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/07_subagent.py">07_subagent.py</a></p>
+    </div>
+<pre>def delegate(name, a):
+    sub_context = [
+        {"role": "system", "content": "You are a research sub-agent. "
+            "Report your findings in at most 80 words."},
+        {"role": "user", "content": a["task"]}]
+    return loop(sub_context, READ_TOOLS, read_only)</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Autonomy: a heartbeat</h3>
+      <p>So far the agent only acts when you type. A heartbeat wakes it on a timer. OpenClaw does this every 30 minutes: the agent reads a plain checklist file, does what is needed and goes back to sleep. You steer it by editing the file. <a href="https://github.com/BirgerMoell/how-agents-work/blob/main/practice/08_heartbeat.py">08_heartbeat.py</a></p>
+    </div>
+<pre># HEARTBEAT.md
+- If there is a file called inbox.txt, summarise it in one sentence.
+- If nothing needs attention, answer exactly: NOTHING TO DO
+
+# heartbeat-log.md  (real output from the practice code)
+## 2026-10-15 12:19
+The meeting has been rescheduled to Friday at 10:00,
+so remember to bring the budget draft.</pre>
+  </div>
+
+  <div class="concept">
+    <div>
+      <h3>Safety: capability is a trade-off</h3>
+      <p>An agent that can send your email can send the wrong email. Models are not deterministic, and text from outside (a web page, a document, an email) can contain instructions that try to take over the agent: <b>prompt injection</b>. Treat everything an agent reads as data, never as orders.</p>
+      <p>Simon Willison's <a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">“lethal trifecta”</a> is a useful test: private data, untrusted content and a way to send data out should never meet in one agent.</p>
+    </div>
+    <div class="grid" style="margin:0">
+      <div class="card"><h4>Least access</h4><p>Only the tools and files the job needs.</p></div>
+      <div class="card"><h4>Ask before acting</h4><p>A human approves anything that cannot be undone.</p></div>
+      <div class="card"><h4>Secrets out of reach</h4><p>Keys and passwords outside the agent's view.</p></div>
+      <div class="card"><h4>Log everything</h4><p>Every tool call can be traced afterwards.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="run">
+  <h2><span class="n">03</span>Step through a real run</h2>
+  <p class="kicker">A recorded run of <code>03_agent_loop.py</code> with <code>qwen3.6:35b-a3b</code> on a laptop, through Ollama. Task: “Which Python file in this folder is the longest, and what does it do?” Press next to see what the context looks like after each model call, and how much is re-sent each time.</p>
+  <div class="sim" data-sim="explainer/trace.json">
+    <div class="controls"><button class="primary" data-next></button><button data-reset></button><div class="meter"></div></div>
+    <div class="msgs" aria-live="polite"></div>
+  </div>
+  <p class="note">Token counts are estimated at four characters per token. Nothing was edited: the agent chose these three tools by itself, and asked for permission before the shell command.</p>
+</section>
+
+<section id="build">
+  <h2><span class="n">04</span>Build one yourself</h2>
+  <p class="kicker">Each step is one short Python file that adds one idea. They run on a local model, so no API key is needed.</p>
+  <ol class="steps">
+    <li><b>Install Ollama and a model with tool support</b><span><a href="https://ollama.com">ollama.com</a>, then <code>ollama pull qwen3.6:35b-a3b</code>. Smaller machines: <code>MODEL=gemma4:e2b</code>, or any model that supports tools.</span></li>
+    <li><b>Get the code</b><span><code>git clone https://github.com/BirgerMoell/how-agents-work &amp;&amp; cd how-agents-work/practice &amp;&amp; pip install openai</code></span></li>
+    <li><b>Run the steps in order</b><span><code>python 01_chat.py</code>, then 02, 03 … 08. Read each file first: they are 20 to 60 lines.</span></li>
+    <li><b>Prefer a hosted model?</b><span>Set <code>OPENAI_API_KEY</code> and <code>MODEL</code>. The same code talks to OpenAI's API.</span></li>
+  </ol>
+  <div class="table-wrap"><table>
+    <thead><tr><th>File</th><th>Adds</th><th>Try</th></tr></thead>
+    <tbody>
+      <tr><td><code>01_chat.py</code></td><td>The context list</td><td>Tell it your name, then ask for it.</td></tr>
+      <tr><td><code>02_one_tool.py</code></td><td>One tool, called once</td><td>“What day of the week is it tomorrow?”</td></tr>
+      <tr><td><code>03_agent_loop.py</code></td><td>The loop, three tools, approval for shell commands</td><td>Run it with no arguments, or give it a task.</td></tr>
+      <tr><td><code>04_context.py</code></td><td>Token budget and compaction</td><td>Ask for long answers, then for something you said first.</td></tr>
+      <tr><td><code>05_memory.py</code></td><td>Memory in a file</td><td>Run it twice.</td></tr>
+      <tr><td><code>06_skills.py</code></td><td>Skills loaded on demand</td><td>“Write a haiku about rain.” Add your own skill folder.</td></tr>
+      <tr><td><code>07_subagent.py</code></td><td>Sub-agents</td><td>Run it with no input and watch two contexts.</td></tr>
+      <tr><td><code>08_heartbeat.py</code></td><td>A timer and a checklist</td><td>Drop a file called <code>inbox.txt</code> next to it.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Challenges</h3>
+  <p>From the agents-from-scratch workshop in <a href="https://github.com/BirgerMoell/agents">BirgerMoell/agents</a>, where the rule is to write the agent without AI coding tools:</p>
+  <div class="grid">
+    <div class="card"><h4>Surprise yourself</h4><p>Give the agent a tool and find a task where it uses it in a way you did not plan.</p></div>
+    <div class="card"><h4>Write a skill</h4><p>Teach it something your team does every week, in one <code>SKILL.md</code>.</p></div>
+    <div class="card"><h4>Better compaction</h4><p>Drop tool results first, keep decisions. Measure what the agent still remembers.</p></div>
+    <div class="card"><h4>Real autonomy</h4><p>Let the heartbeat do one useful thing a day, and log every action.</p></div>
+  </div>
+</section>
+
+<section id="glossary">
+  <h2><span class="n">05</span>Words you will meet</h2>
+  <div class="table-wrap"><table>
+    <tbody>
+      <tr><td><b>Token</b></td><td>The unit a model reads and writes: a word or part of a word. Roughly four characters of English.</td></tr>
+      <tr><td><b>Context window</b></td><td>The maximum number of tokens a model can take in one call, for example 200 000.</td></tr>
+      <tr><td><b>System prompt</b></td><td>The first message: instructions that frame every answer.</td></tr>
+      <tr><td><b>Tool call / function calling</b></td><td>A structured reply in which the model asks the program to run a named function with arguments.</td></tr>
+      <tr><td><b>Harness</b></td><td>Everything around the model: the loop, the tools, the context handling. The part you build.</td></tr>
+      <tr><td><b>Compaction</b></td><td>Replacing older context with a summary when the window fills up.</td></tr>
+      <tr><td><b>RAG</b></td><td>Retrieval-augmented generation: search a knowledge base and put the relevant pieces in the context.</td></tr>
+      <tr><td><b>MCP</b></td><td><a href="https://modelcontextprotocol.io">Model Context Protocol</a>: a standard way to plug external tools into agents.</td></tr>
+      <tr><td><b>Prompt injection</b></td><td>Instructions hidden in content the agent reads, aimed at taking over its behaviour.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="sources">
+  <h2><span class="n">06</span>Sources and further reading</h2>
+  <ul class="sources">
+    <li><a href="https://www.youtube.com/watch?v=DS6cwCkN5lg&amp;t=173s">Lecture 9: AI Agents, acting in the world through tools</a> · Birger Moëll<span>Agents as an LLM brain plus tools, the standard tool-calling API, bash as a universal tool, skills, security trade-offs, heartbeat and memory in OpenClaw.</span></li>
+    <li><a href="https://www.youtube.com/watch?v=bnNSgrAEQiU&amp;t=699s">Lecture 8: Context Engineering</a> · Birger Moëll<span>Why context is a prerequisite for intelligence, what goes into an agent's context, cost, compaction, memory search and hallucination.</span></li>
+    <li><a href="https://github.com/BirgerMoell/agents">BirgerMoell/agents: Agents from Scratch</a><span>A TypeScript agent written without AI tools, with skills, local models through Ollama, and 14 workshop demos from one tool to a self-extending voice agent.</span></li>
+    <li><a href="https://fly.io/blog/everyone-write-an-agent/">You Should Write An Agent</a> · Thomas Ptacek, Fly.io, 6 November 2025<span>The 15-line chatbot, adding a tool, sub-agents as extra context arrays, and why context engineering is real programming.</span></li>
+    <li><a href="https://agentskills.io">Agent Skills</a><span>The open format for skills used in step 6.</span></li>
+    <li><a href="https://www.anthropic.com/engineering/building-effective-agents">Building effective agents</a> · Anthropic<span>Workflows versus agents, and when the simple patterns are enough.</span></li>
+    <li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a> · Anthropic</li>
+    <li><a href="https://platform.openai.com/docs/guides/function-calling">Function calling guide</a> · OpenAI<span>The tool-calling format the practice code uses.</span></li>
+    <li><a href="https://github.com/openclaw/openclaw">OpenClaw</a> and <a href="https://docs.openclaw.ai">its documentation</a><span>An open-source personal agent with heartbeat, memory files and skills.</span></li>
+    <li><a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">The lethal trifecta for AI agents</a> · Simon Willison</li>
+  </ul>
+</section>
+</main>
+
+<footer><div class="wrap">
+  Made by Birger Moëll. Animations are drawn with code in <a href="https://github.com/BirgerMoell/how-agents-work/tree/main/docs/explainer"><code>docs/explainer/</code></a> and rendered with headless Chromium and ffmpeg. Voices run locally: Kokoro 82M (English) and Supertonic 3 (Swedish). Code: MIT licence.
+  <br><a href="https://github.com/BirgerMoell/how-agents-work">github.com/BirgerMoell/how-agents-work</a>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

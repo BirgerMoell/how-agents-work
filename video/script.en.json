@@ -1,0 +1,111 @@
+{
+  "lang": "en",
+  "title": "How AI agents work",
+  "scenes": [
+    {"id": "intro", "chapter": "Introduction", "lines": [
+      "Ask a language model what the meaning of life is, and it will give you an answer.",
+      "Ask it which file on your computer is the largest, and it can't.",
+      "It can only write text.",
+      "An agent is what you get when you let that text do things.",
+      "In the next few minutes we will build one from nothing, piece by piece.",
+      "By the end, you will know how tools like Claude Code, Codex and OpenClaw work underneath.",
+      "It is simpler than you think."
+    ]},
+    {"id": "model", "chapter": "The model", "lines": [
+      "Start with the brain.",
+      "A large language model does one thing: given some text, it predicts the next token, a word or a piece of a word.",
+      "Then it does it again, and again.",
+      "That is all.",
+      "It has no memory between calls, no clock, and no hands.",
+      "Everything it knows about your situation has to be in the text you send it.",
+      "That text is called the context."
+    ]},
+    {"id": "list", "chapter": "A chat is a list", "lines": [
+      "So how does a chatbot remember the conversation?",
+      "It doesn't. The program does.",
+      "It keeps a list of messages: a system message with instructions, your message, and the model's reply.",
+      "Every time you say something, the whole list is sent again.",
+      "Here is a complete chatbot, in about ten lines of Python.",
+      "The list called context is the only memory there is."
+    ]},
+    {"id": "tool", "chapter": "Tools", "lines": [
+      "Now the trick that turns a chatbot into an agent.",
+      "Along with the messages, we send a description of a tool: a name, what it does, and which arguments it takes. Here, a clock.",
+      "The model cannot run anything. But it can answer with a special message that says: please call the clock.",
+      "Our program sees that, runs the real function, and adds the result to the list as a new message.",
+      "Then we ask the model again. Now the time is in its context, and it can answer: tomorrow is Friday.",
+      "The model asks. The program acts."
+    ]},
+    {"id": "loop", "chapter": "The loop", "lines": [
+      "Put that in a loop, and you have an agent.",
+      "Call the model. If it asks for tools, run them, add the results, and call it again.",
+      "If it answers without asking for a tool, it is done.",
+      "The model decides how many steps it needs. Our code only sets the maximum.",
+      "Every agent you have heard of, from coding assistants to personal assistants, is a variation of this loop."
+    ]},
+    {"id": "trace", "chapter": "A real run", "lines": [
+      "Here is a real run, on a local model on a laptop.",
+      "The task: which Python file in this folder is the longest, and what does it do?",
+      "We never told it how. It lists the files.",
+      "Then it decides to count the lines with a shell command, and our program asks us for permission first.",
+      "It reads the longest file, and answers. Three tools, about thirteen seconds.",
+      "All we did was give it permission to look. It figured out the rest."
+    ]},
+    {"id": "bash", "chapter": "One tool to rule them all", "lines": [
+      "Tools can be anything a program can do: search the web, read a PDF, send an email, query a database.",
+      "One tool is special.",
+      "Give an agent a shell, and it can run any command on the computer.",
+      "Models have read millions of shell commands, so a single tool unlocks thousands of abilities.",
+      "That is how coding agents work. It is also why they can be dangerous."
+    ]},
+    {"id": "context", "chapter": "Context engineering", "lines": [
+      "Which brings us to the real engineering problem: the context.",
+      "Everything goes in it. The system prompt, the tool descriptions, the skills, the memory, the conversation, and every tool result.",
+      "And the whole thing is sent again on every single step.",
+      "It fills up fast. One long file can add thousands of tokens at once.",
+      "Bigger contexts cost more, and past a point, the model gets worse at using them.",
+      "So when the window is nearly full, agents compact. The model summarises the older part, and the summary replaces it. The latest messages are kept word for word.",
+      "Something is always lost. Deciding what to keep is the art.",
+      "This is why people now talk about context engineering, not prompt engineering."
+    ]},
+    {"id": "memory", "chapter": "Memory", "lines": [
+      "The context disappears when the program stops. Memory is how an agent remembers across sessions.",
+      "The simplest version is a file. Give the agent a tool to write a note, and read the notes back into the context next time.",
+      "Real systems add search, either plain keyword search or vector search with embeddings, to pull in only the memories that matter.",
+      "And forgetting matters too. A memory full of trivia is just more noise in the context."
+    ]},
+    {"id": "skills", "chapter": "Skills", "lines": [
+      "Skills solve the same problem for know-how.",
+      "A skill is a folder with a short description and a set of instructions.",
+      "At the start, only the one-line descriptions go into the context.",
+      "When a task matches, the agent loads the full instructions, and only then.",
+      "A hundred skills cost a hundred lines, not a hundred manuals. And an agent can even write new skills for itself."
+    ]},
+    {"id": "subagents", "chapter": "Sub-agents", "lines": [
+      "Sub-agents are the same idea, one level up.",
+      "A sub-agent is just another context list, with its own instructions and tools, run through the same loop.",
+      "The main agent hands it a task. The sub-agent might read twenty files, but only its short report comes back.",
+      "The main context stays clean, and several sub-agents can work in parallel."
+    ]},
+    {"id": "heartbeat", "chapter": "Autonomy", "lines": [
+      "So far, the agent only acts when you type.",
+      "Autonomy means it can act on its own.",
+      "OpenClaw uses a heartbeat. Every thirty minutes the agent wakes up, reads a plain checklist file, does what is needed, and goes back to sleep.",
+      "You stay in control by editing the checklist."
+    ]},
+    {"id": "safety", "chapter": "Safety", "lines": [
+      "More power means more risk. An agent that can send your email can send the wrong email.",
+      "Language models are not deterministic. And text from the outside world, a web page or a document, can contain instructions that try to take over the agent. This is called prompt injection.",
+      "So treat everything an agent reads as data, never as orders.",
+      "Give it the least access that gets the job done. Ask a human before anything that cannot be undone. Keep secrets out of reach. And log everything.",
+      "Capability and safety are a trade-off. Choose it deliberately."
+    ]},
+    {"id": "outro", "chapter": "Build one", "lines": [
+      "That is the whole picture.",
+      "A model that predicts text. A list that holds the context. Tools that let the text act. And a loop that keeps going until the job is done.",
+      "Around it: compaction, memory, skills, sub-agents, and a heartbeat.",
+      "You can build every piece in an afternoon. The code for each step, the sources, and an interactive guide are linked below.",
+      "Build one yourself. It is the best way to understand where this is going."
+    ]}
+  ]
+}
