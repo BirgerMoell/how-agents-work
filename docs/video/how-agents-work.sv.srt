@@ -1,0 +1,307 @@
+1
+00:00:00,800 --> 00:00:05,171
+Fråga en språkmodell vad meningen med livet är, så får du ett svar.
+
+2
+00:00:05,621 --> 00:00:10,327
+Fråga den vilken fil på din dator som är störst, så kan den inte svara.
+
+3
+00:00:10,777 --> 00:00:12,448
+Den kan bara skriva text.
+
+4
+00:00:12,898 --> 00:00:16,895
+En agent är vad du får när du låter den texten göra saker.
+
+5
+00:00:17,345 --> 00:00:21,705
+Under de närmaste minuterna bygger vi en från grunden, bit för bit.
+
+6
+00:00:22,155 --> 00:00:27,559
+Efteråt vet du hur verktyg som Claude Code, Codex och OpenClaw fungerar under ytan.
+
+7
+00:00:28,010 --> 00:00:29,609
+Det är enklare än du tror.
+
+8
+00:00:31,509 --> 00:00:32,981
+Vi börjar med hjärnan.
+
+9
+00:00:33,431 --> 00:00:41,806
+En stor språkmodell gör en enda sak: givet en text förutsäger den nästa token, ett ord eller en del av ett ord.
+
+10
+00:00:42,256 --> 00:00:44,266
+Sedan gör den det igen, och igen.
+
+11
+00:00:44,716 --> 00:00:45,639
+Det är allt.
+
+12
+00:00:46,089 --> 00:00:49,936
+Den har inget minne mellan anropen, ingen klocka och inga händer.
+
+13
+00:00:50,386 --> 00:00:54,639
+Allt den vet om din situation måste finnas i texten du skickar.
+
+14
+00:00:55,089 --> 00:00:56,832
+Den texten kallas kontexten.
+
+15
+00:00:58,732 --> 00:01:01,228
+Hur kommer en chattbot då ihåg samtalet?
+
+16
+00:01:01,678 --> 00:01:04,191
+Det gör den inte. Programmet gör det.
+
+17
+00:01:04,641 --> 00:01:13,371
+Programmet sparar en lista med meddelanden: ett systemmeddelande med instruktioner, ditt meddelande och modellens svar.
+
+18
+00:01:13,821 --> 00:01:17,058
+Varje gång du säger något skickas hela listan igen.
+
+19
+00:01:17,508 --> 00:01:21,175
+Här är en komplett chattbot, på ungefär tio rader Python.
+
+20
+00:01:21,625 --> 00:01:25,029
+Listan som heter context är det enda minne som finns.
+
+21
+00:01:26,929 --> 00:01:30,272
+Nu kommer tricket som gör en chattbot till en agent.
+
+22
+00:01:30,722 --> 00:01:40,491
+Tillsammans med meddelandena skickar vi en beskrivning av ett verktyg: ett namn, vad det gör och vilka argument det tar. Här en klocka.
+
+23
+00:01:40,941 --> 00:01:49,591
+Modellen kan inte köra något själv. Men den kan svara med ett särskilt meddelande som säger: anropa klockan.
+
+24
+00:01:50,041 --> 00:01:57,326
+Vårt program ser det, kör den riktiga funktionen och lägger till resultatet i listan som ett nytt meddelande.
+
+25
+00:01:57,776 --> 00:02:05,635
+Sedan frågar vi modellen igen. Nu finns tiden i kontexten, och den kan svara: i morgon är det fredag.
+
+26
+00:02:06,085 --> 00:02:08,556
+Modellen ber. Programmet agerar.
+
+27
+00:02:10,456 --> 00:02:12,878
+Lägg det i en loop, så har du en agent.
+
+28
+00:02:13,328 --> 00:02:19,964
+Anropa modellen. Om den ber om verktyg, kör dem, lägg till resultaten och anropa den igen.
+
+29
+00:02:20,414 --> 00:02:23,870
+Om den svarar utan att be om ett verktyg är den klar.
+
+30
+00:02:24,320 --> 00:02:29,429
+Modellen bestämmer hur många steg den behöver. Vår kod sätter bara ett tak.
+
+31
+00:02:29,879 --> 00:02:38,438
+Varje agent du har hört talas om, från kodassistenter till personliga assistenter, är en variant av den här loopen.
+
+32
+00:02:40,338 --> 00:02:44,528
+Här är en riktig körning, med en lokal modell på en bärbar dator.
+
+33
+00:02:44,978 --> 00:02:50,075
+Uppgiften: vilken Python-fil i den här mappen är längst, och vad gör den?
+
+34
+00:02:50,525 --> 00:02:53,333
+Vi sa aldrig hur. Den listar filerna.
+
+35
+00:02:53,783 --> 00:03:01,515
+Sedan bestämmer den sig för att räkna raderna med ett terminalkommando, och vårt program ber oss om lov först.
+
+36
+00:03:01,965 --> 00:03:07,003
+Den läser den längsta filen och svarar. Allt tog ungefär tretton sekunder.
+
+37
+00:03:07,453 --> 00:03:11,760
+Vi gav den bara lov att titta. Resten listade den ut själv.
+
+38
+00:03:13,660 --> 00:03:22,820
+Verktyg kan vara vad som helst som ett program kan göra: söka på webben, läsa en PDF, skicka ett mejl, fråga en databas.
+
+39
+00:03:23,270 --> 00:03:24,914
+Ett verktyg är speciellt.
+
+40
+00:03:25,364 --> 00:03:30,469
+Ge en agent en terminal, så kan den köra vilket kommando som helst på datorn.
+
+41
+00:03:30,919 --> 00:03:37,644
+Modellerna har läst miljontals terminalkommandon, så ett enda verktyg låser upp tusentals förmågor.
+
+42
+00:03:38,094 --> 00:03:42,947
+Det är så kodagenter fungerar. Det är också därför de kan vara farliga.
+
+43
+00:03:44,847 --> 00:03:48,863
+Det leder oss till det verkliga ingenjörsproblemet: kontexten.
+
+44
+00:03:49,313 --> 00:03:57,644
+Allt hamnar där. Systemprompten, verktygsbeskrivningarna, färdigheterna, minnet, samtalet och varje verktygsresultat.
+
+45
+00:03:58,094 --> 00:04:01,046
+Och alltihop skickas igen i varje enskilt steg.
+
+46
+00:04:01,496 --> 00:04:06,490
+Den fylls snabbt. En enda lång fil kan lägga till tusentals tokens på en gång.
+
+47
+00:04:06,940 --> 00:04:13,056
+Större kontext kostar mer, och efter en viss punkt blir modellen sämre på att använda den.
+
+48
+00:04:13,506 --> 00:04:26,122
+När fönstret nästan är fullt komprimerar agenten därför. Modellen sammanfattar den äldre delen, och sammanfattningen ersätter den. De senaste meddelandena behålls ordagrant.
+
+49
+00:04:26,572 --> 00:04:31,809
+Något går alltid förlorat. Att välja vad som ska behållas är konsten.
+
+50
+00:04:32,259 --> 00:04:36,953
+Därför talar man nu om kontexthantering, inte om promptformulering.
+
+51
+00:04:38,853 --> 00:04:45,603
+Kontexten försvinner när programmet stängs. Minne är hur en agent kommer ihåg mellan sessioner.
+
+52
+00:04:46,053 --> 00:04:55,633
+Den enklaste varianten är en fil. Ge agenten ett verktyg för att skriva en anteckning, och läs in anteckningarna i kontexten nästa gång.
+
+53
+00:04:56,083 --> 00:05:06,252
+Riktiga system lägger till sökning, antingen vanlig ordsökning eller vektorsökning med inbäddningar, för att bara hämta de minnen som spelar roll.
+
+54
+00:05:06,702 --> 00:05:13,050
+Och att glömma är också viktigt. Ett minne fullt av struntsaker är bara mer brus i kontexten.
+
+55
+00:05:14,950 --> 00:05:19,624
+Färdigheter, på engelska skills, löser samma problem för kunnande.
+
+56
+00:05:20,074 --> 00:05:25,345
+En färdighet är en mapp med en kort beskrivning och en uppsättning instruktioner.
+
+57
+00:05:25,795 --> 00:05:30,465
+Från början hamnar bara beskrivningarna, en rad var, i kontexten.
+
+58
+00:05:30,915 --> 00:05:36,787
+När en uppgift passar laddar agenten in de fullständiga instruktionerna, och först då.
+
+59
+00:05:37,237 --> 00:05:46,506
+Hundra färdigheter kostar hundra rader, inte hundra manualer. En agent kan till och med skriva nya färdigheter åt sig själv.
+
+60
+00:05:48,406 --> 00:05:50,878
+Underagenter är samma idé, en nivå upp.
+
+61
+00:05:51,328 --> 00:05:59,032
+En underagent är bara en annan kontextlista, med egna instruktioner och verktyg, som körs genom samma loop.
+
+62
+00:05:59,482 --> 00:06:07,872
+Huvudagenten ger den en uppgift. Underagenten kanske läser tjugo filer, men bara dess korta rapport kommer tillbaka.
+
+63
+00:06:08,322 --> 00:06:13,166
+Huvudkontexten hålls ren, och flera underagenter kan arbeta samtidigt.
+
+64
+00:06:15,066 --> 00:06:17,942
+Hittills agerar agenten bara när du skriver.
+
+65
+00:06:18,393 --> 00:06:21,800
+Självständighet betyder att den kan agera på egen hand.
+
+66
+00:06:22,250 --> 00:06:31,646
+OpenClaw använder ett hjärtslag. Var trettionde minut vaknar agenten, läser en enkel checklista, gör det som behövs och somnar om.
+
+67
+00:06:32,096 --> 00:06:35,434
+Du behåller kontrollen genom att redigera checklistan.
+
+68
+00:06:37,334 --> 00:06:43,551
+Mer förmåga betyder mer risk. En agent som kan skicka din e-post kan skicka fel e-post.
+
+69
+00:06:44,001 --> 00:06:56,953
+Språkmodeller är inte deterministiska. Och text utifrån, en webbsida eller ett dokument, kan innehålla instruktioner som försöker ta över agenten. Det kallas promptinjektion.
+
+70
+00:06:57,403 --> 00:07:01,566
+Behandla därför allt en agent läser som data, aldrig som order.
+
+71
+00:07:02,016 --> 00:07:13,930
+Ge den minsta möjliga åtkomst som räcker för uppgiften. Fråga en människa innan något som inte går att ångra. Håll hemligheter utom räckhåll. Och logga allt.
+
+72
+00:07:14,380 --> 00:07:18,495
+Förmåga och säkerhet är en avvägning. Gör den medvetet.
+
+73
+00:07:20,395 --> 00:07:21,660
+Det är hela bilden.
+
+74
+00:07:22,110 --> 00:07:33,178
+En modell som förutsäger text. En lista som håller kontexten. Verktyg som låter texten agera. Och en loop som fortsätter tills jobbet är klart.
+
+75
+00:07:33,627 --> 00:07:39,360
+Runt omkring: komprimering, minne, färdigheter, underagenter och ett hjärtslag.
+
+76
+00:07:39,810 --> 00:07:47,784
+Du kan bygga varje del på en eftermiddag. Koden för varje steg, källorna och en interaktiv guide finns länkade nedan.
+
+77
+00:07:48,234 --> 00:07:53,274
+Bygg en själv. Det är det bästa sättet att förstå vart det här är på väg.
