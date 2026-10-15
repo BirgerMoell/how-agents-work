@@ -6,7 +6,7 @@ sentence from the ground up, in English and Swedish, four ways:
 | | English | Svenska |
 |---|---|---|
 | Interactive guide | [birgermoell.github.io/how-agents-work](https://birgermoell.github.io/how-agents-work/) | [/sv/](https://birgermoell.github.io/how-agents-work/sv/) |
-| Video (7–8 min) | [how-agents-work.en.mp4](docs/video/how-agents-work.en.mp4) | [how-agents-work.sv.mp4](docs/video/how-agents-work.sv.mp4) |
+| Video (7–9 min) | [how-agents-work.en.mp4](docs/video/how-agents-work.en.mp4) | [how-agents-work.sv.mp4](docs/video/how-agents-work.sv.mp4) |
 | Animated presentation | [present](https://birgermoell.github.io/how-agents-work/explainer/?lang=en&mode=present) | [presentera](https://birgermoell.github.io/how-agents-work/explainer/?lang=sv&mode=present) |
 | Runnable code | [`practice/`](practice/) | [`practice/README.sv.md`](practice/README.sv.md) |
 
@@ -54,7 +54,7 @@ code runs three ways:
 
 The narration is written in [`video/script.en.json`](video/script.en.json) and
 [`video/script.sv.json`](video/script.sv.json), and synthesised one sentence at a time with local
-voices, Kokoro 82M for English and Supertonic 3 for Swedish ([`video/narrate.py`](video/narrate.py)).
+voices: Kokoro 82M for English (local) and the ElevenLabs voice Elin Nilsson for Swedish ([`video/narrate.py`](video/narrate.py); Supertonic 3 is the local Swedish alternative).
 Sentence timings become the cues the animations are synced to. Every narration sentence was checked by
 transcribing it back with a local speech recogniser.
 

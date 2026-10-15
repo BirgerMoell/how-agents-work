@@ -6,7 +6,7 @@ meningen från grunden, på svenska och engelska, på fyra sätt:
 | | Svenska | English |
 |---|---|---|
 | Interaktiv guide | [birgermoell.github.io/how-agents-work/sv](https://birgermoell.github.io/how-agents-work/sv/) | [/](https://birgermoell.github.io/how-agents-work/) |
-| Video (7–8 min) | [how-agents-work.sv.mp4](docs/video/how-agents-work.sv.mp4) | [how-agents-work.en.mp4](docs/video/how-agents-work.en.mp4) |
+| Video (7–9 min) | [how-agents-work.sv.mp4](docs/video/how-agents-work.sv.mp4) | [how-agents-work.en.mp4](docs/video/how-agents-work.en.mp4) |
 | Animerad presentation | [presentera](https://birgermoell.github.io/how-agents-work/explainer/?lang=sv&mode=present) | [present](https://birgermoell.github.io/how-agents-work/explainer/?lang=en&mode=present) |
 | Körbar kod | [`practice/README.sv.md`](practice/README.sv.md) | [`practice/`](practice/) |
 
@@ -52,7 +52,7 @@ spelar nästa steg, och bildruta för bildruta i headless Chromium till ffmpeg
 ([`video/render.py`](video/render.py)).
 
 Manuset finns i [`video/script.sv.json`](video/script.sv.json). Det läses in mening för mening med
-lokala röster, Supertonic 3 för svenska och Kokoro 82M för engelska
+ElevenLabs-rösten Elin Nilsson för svenska (Supertonic 3 är det lokala alternativet) och Kokoro 82M för engelska
 ([`video/narrate.py`](video/narrate.py)), och varje menings starttid styr animationerna. Varje mening
 kontrollerades genom att transkriberas tillbaka med en lokal svensk taligenkännare.
 
