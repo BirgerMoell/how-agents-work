@@ -57,7 +57,7 @@ ElevenLabs-rösten Elin Nilsson för svenska (Supertonic 3 är det lokala altern
 kontrollerades genom att transkriberas tillbaka med en lokal svensk taligenkännare.
 
 ```bash
-uv run video/narrate.py sv
+uv run video/narrate.py sv --voice elevenlabs:Elin   # kräver ELEVENLABS_API_KEY; utan flaggan: Supertonic 3, lokalt
 python video/render.py sv
 ```
 
